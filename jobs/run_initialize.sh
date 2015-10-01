@@ -146,12 +146,6 @@ fi
 ZUUL_SITE=`echo "$ZUUL_URL" |sed 's/.\{2\}$//'`
 echo ZUUL_SITE=$ZUUL_SITE >> /home/jenkins-slave/runs/devstack_params.$ZUUL_UUID.txt
 
-# Set ZUUL IP in hosts file
-ZUUL="10.21.7.8"
-if  ! grep -qi zuul /etc/hosts ; then
-    run_ssh_cmd_with_retry ubuntu@$FLOATING_IP $DEVSTACK_SSH_KEY "echo '$ZUUL zuul.openstack.tld' | sudo tee -a /etc/hosts"
-fi
-
 set +e
 VLAN_RANGE=`/usr/local/src/neutron-ci/vlan_allocation.py -a $NAME`
 if [ ! -z "$VLAN_RANGE" ]
