@@ -138,7 +138,7 @@ run_ssh_cmd_with_retry ubuntu@$FLOATING_IP $DEVSTACK_SSH_KEY "sudo ln -fs /usr/s
 scp -v -r -o "StrictHostKeyChecking no" -o "UserKnownHostsFile /dev/null" -i $DEVSTACK_SSH_KEY /usr/local/src/neutron-ci/devstack_vm/* ubuntu@$FLOATING_IP:/home/ubuntu/
 
 # hack for pbr issue in case: branch != master ; don't install from git
-if [ $BRANCH != "master"]
+if [ $BRANCH != "master" ]
 then
     run_ssh_cmd_with_retry ubuntu@$FLOATING_IP $DEVSTACK_SSH_KEY "sed -i 's/LIBS_FROM_GIT=pbr/#LIBS_FROM_GIT=pbr/g' /home/ubuntu/devstack/local.conf" 3
 fi
@@ -149,7 +149,7 @@ echo ZUUL_SITE=$ZUUL_SITE >> /home/jenkins-slave/runs/devstack_params.$ZUUL_UUID
 # Set ZUUL IP in hosts file
 ZUUL="10.21.7.8"
 if  ! grep -qi zuul /etc/hosts ; then
-    echo "$ZUUL zuul.openstack.tld"  >> /etc/hosts
+    sudo echo "$ZUUL zuul.openstack.tld"  >> /etc/hosts
 fi
 
 set +e
