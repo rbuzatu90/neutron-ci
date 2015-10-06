@@ -10,7 +10,7 @@
 #         http://www.apache.org/licenses/LICENSE-2.0
 #
 #    Unless required by applicable law or agreed to in writing, software
-#    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+#    distributed under the License is distributed on an "AS IS" BASIS, WITHOUTF
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
@@ -138,7 +138,7 @@ run_ssh_cmd_with_retry ubuntu@$FLOATING_IP $DEVSTACK_SSH_KEY "sudo ln -fs /usr/s
 scp -v -r -o "StrictHostKeyChecking no" -o "UserKnownHostsFile /dev/null" -i $DEVSTACK_SSH_KEY /usr/local/src/neutron-ci/devstack_vm/* ubuntu@$FLOATING_IP:/home/ubuntu/
 
 # hack for pbr issue in case: branch != master ; don't install from git
-if [ $BRANCH != "master" ]
+if [ $ZUUL_BRANCH != "master" ]
 then
     run_ssh_cmd_with_retry ubuntu@$FLOATING_IP $DEVSTACK_SSH_KEY "sed -i 's/LIBS_FROM_GIT=pbr/#LIBS_FROM_GIT=pbr/g' /home/ubuntu/devstack/local.conf" 3
 fi
