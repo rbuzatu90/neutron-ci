@@ -220,7 +220,7 @@ ExecRetry {
 
 ExecRetry {
     pushd C:\OpenStack\build\openstack\nova
-    git fetch https://review.openstack.org/openstack/nova refs/changes/20/213720/4
+    git fetch https://review.openstack.org/openstack/nova refs/changes/20/213720/5
     cherry_pick FETCH_HEAD
     git fetch https://review.openstack.org/openstack/nova refs/changes/37/234437/4
     cherry_pick FETCH_HEAD
