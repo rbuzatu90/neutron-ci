@@ -104,8 +104,8 @@ if [ "$IS_DEBUG_JOB" != "yes" ]
         	ssh -o "UserKnownHostsFile /dev/null" -o "StrictHostKeyChecking no" -i $LOGS_SSH_KEY logs@logs.openstack.tld "tar -xzf /srv/logs/debug/neutron/$ZUUL_CHANGE/$ZUUL_PATCHSET/$TIMESTAMP/aggregate-logs.tar.gz -C /srv/logs/debug/neutron/$ZUUL_CHANGE/$ZUUL_PATCHSET/$TIMESTAMP/"
 
                 echo "Uploading temporary logs"
-                scp -o "UserKnownHostsFile /dev/null" -o "StrictHostKeyChecking no" -i $LOGS_SSH_KEY "/home/jenkins-slave/logs/hyperv-build-log-$ZUUL_UUID-*" logs@logs.openstack.tld:/srv/logs/neutron/$ZUUL_CHANGE/$ZUUL_PATCHSET/$TIMESTAMP/
-                scp -o "UserKnownHostsFile /dev/null" -o "StrictHostKeyChecking no" -i $LOGS_SSH_KEY "/home/jenkins-slave/logs/devstack-build-log-$ZUUL_UUID" logs@logs.openstack.tld:/srv/logs/neutron/$ZUUL_CHANGE/$ZUUL_PATCHSET/$TIMESTAMP/
+                scp -o "UserKnownHostsFile /dev/null" -o "StrictHostKeyChecking no" -i $LOGS_SSH_KEY "/home/jenkins-slave/logs/hyperv-build-log-$ZUUL_UUID-*" logs@logs.openstack.tld:/srv/logs/debug/neutron/$ZUUL_CHANGE/$ZUUL_PATCHSET/$TIMESTAMP/
+                scp -o "UserKnownHostsFile /dev/null" -o "StrictHostKeyChecking no" -i $LOGS_SSH_KEY "/home/jenkins-slave/logs/devstack-build-log-$ZUUL_UUID" logs@logs.openstack.tld:/srv/logs/debug/neutron/$ZUUL_CHANGE/$ZUUL_PATCHSET/$TIMESTAMP/
 
 		echo "Fixing permissions on all log files"
         	ssh -o "UserKnownHostsFile /dev/null" -o "StrictHostKeyChecking no" -i $LOGS_SSH_KEY logs@logs.openstack.tld "chmod a+rx -R /srv/logs/debug/neutron/$ZUUL_CHANGE/$ZUUL_PATCHSET/$TIMESTAMP"    
