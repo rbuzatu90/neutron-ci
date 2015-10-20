@@ -114,26 +114,12 @@ git config --global user.email "hyper-v_ci@microsoft.com"
 git config --global user.name "Hyper-V CI"
 
 
-if ($buildFor -eq "openstack/nova"){
-    ExecRetry {
-        GitClonePull "$buildDir\neutron" "https://github.com/openstack/neutron.git" $branchName
-    }
-    ExecRetry {
-        GitClonePull "$buildDir\networking-hyperv" "https://github.com/stackforge/networking-hyperv.git" "master"
-    }
-}elseif ($buildFor -eq "openstack/neutron" -or $buildFor -eq "openstack/quantum"){
+if ($buildFor -eq "openstack/neutron" -or $buildFor -eq "openstack/quantum"){
     ExecRetry {
         GitClonePull "$buildDir\nova" "https://github.com/openstack/nova.git" $branchName
     }
     ExecRetry {
-        GitClonePull "$buildDir\networking-hyperv" "https://github.com/stackforge/networking-hyperv.git" "master"
-    }
-}elseif ($buildFor -eq "stackforge/networking-hyperv"){
-    ExecRetry {
-        GitClonePull "$buildDir\nova" "https://github.com/openstack/nova.git" $branchName
-    }
-    ExecRetry {
-        GitClonePull "$buildDir\neutron" "https://github.com/openstack/neutron.git" $branchName
+        GitClonePull "$buildDir\networking-hyperv" "https://github.com/openstack/networking-hyperv.git" "master"
     }
 }else{
     Throw "Cannot build for project: $buildFor"
