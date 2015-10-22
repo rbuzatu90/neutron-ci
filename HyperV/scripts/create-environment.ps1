@@ -121,6 +121,9 @@ if ($buildFor -eq "openstack/neutron" -or $buildFor -eq "openstack/quantum"){
     ExecRetry {
         GitClonePull "$buildDir\networking-hyperv" "https://github.com/openstack/networking-hyperv.git" "master"
     }
+    ExecRetry {
+        GitClonePull "$buildDir\compute-hyperv" "https://github.com/openstack/compute-hyperv.git" $branchName
+    }
 }else{
     Throw "Cannot build for project: $buildFor"
 }
@@ -191,13 +194,13 @@ function cherry_pick($commit) {
 }
 
 ExecRetry {
-    & pip install -e C:\OpenStack\build\openstack\networking-hyperv
+    & pip install C:\OpenStack\build\openstack\networking-hyperv
     if ($LastExitCode) { Throw "Failed to install networking-hyperv from repo" }
     popd
 }
 
 ExecRetry {
-    & pip install -e C:\OpenStack\build\openstack\neutron
+    & pip install C:\OpenStack\build\openstack\neutron
     if ($LastExitCode) { Throw "Failed to install neutron from repo" }
     popd
 }
@@ -208,8 +211,14 @@ ExecRetry {
     git fetch https://review.openstack.org/openstack/nova refs/changes/20/213720/5
     Write-Host "Cherry-picking.. refs/changes/20/213720/5"
     cherry_pick FETCH_HEAD
-    & pip install -e C:\OpenStack\build\openstack\nova
+    & pip install C:\OpenStack\build\openstack\nova
     if ($LastExitCode) { Throw "Failed to install nova fom repo" }
+    popd
+}
+
+ExecRetry {
+    & pip install C:\OpenStack\build\openstack\compute-hyperv
+    if ($LastExitCode) { Throw "Failed to install compute-hyperv from repo" }
     popd
 }
 
