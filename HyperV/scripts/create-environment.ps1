@@ -119,6 +119,9 @@ if ($buildFor -eq "openstack/neutron" -or $buildFor -eq "openstack/quantum"){
         GitClonePull "$buildDir\nova" "https://github.com/openstack/nova.git" $branchName
     }
     ExecRetry {
+        GitClonePull "$buildDir\compute-hyperv" "https://github.com/openstack/compute-hyperv.git" $branchName
+    }
+    ExecRetry {
         GitClonePull "$buildDir\networking-hyperv" "https://github.com/openstack/networking-hyperv.git" "master"
     }
 }else{
@@ -210,6 +213,12 @@ ExecRetry {
     cherry_pick FETCH_HEAD
     & pip install -e C:\OpenStack\build\openstack\nova
     if ($LastExitCode) { Throw "Failed to install nova fom repo" }
+    popd
+}
+
+ExecRetry {
+    & pip install C:\OpenStack\build\openstack\compute-hyperv
+    if ($LastExitCode) { Throw "Failed to install Hyperv-Compute fom repo" }
     popd
 }
 
