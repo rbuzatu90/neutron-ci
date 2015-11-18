@@ -1,6 +1,6 @@
 #!/bin/bash
 
-project=${1:-"openstack/nova"}
+project=${1:-"openstack/neutron"}
 tests_dir=${2:-"/opt/stack/tempest"}
 parallel_tests=${3:-8}
 max_attempts=${4:-3}
@@ -37,17 +37,15 @@ fi
 $basedir/parallel-test-runner.sh $tests_file $tests_dir $log_file \
     $parallel_tests $max_attempts || true
 
-if [[ $project == "nova" ]]; then
-    isolated_tests_file=$basedir/isolated-tests.txt
-    if [ -f "$isolated_tests_file" ]; then
-        echo "Running isolated tests from: $isolated_tests_file"
-        log_tmp=$(tempfile)
-        $basedir/parallel-test-runner.sh $isolated_tests_file $tests_dir $log_tmp \
-            $parallel_tests $max_attempts 1 || true
+isolated_tests_file=$basedir/isolated-tests.txt
+if [ -f "$isolated_tests_file" ]; then
+    echo "Running isolated tests from: $isolated_tests_file"
+    log_tmp=$(tempfile)
+    $basedir/parallel-test-runner.sh $isolated_tests_file $tests_dir $log_tmp \
+        $parallel_tests $max_attempts 1 || true
 
-        cat $log_tmp >> $log_file
-        rm $log_tmp
-    fi
+    cat $log_tmp >> $log_file
+    rm $log_tmp
 fi
 
 rm $tests_file
@@ -65,3 +63,4 @@ echo "Total execution time: $SECONDS seconds."
 popd
 
 exit $exit_code
+
