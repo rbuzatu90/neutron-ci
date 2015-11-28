@@ -21,9 +21,6 @@ pushd $basedir
 
 . $basedir/utils.sh
 
-tests_file=$(tempfile)
-$basedir/get-tests.sh $project_name $tests_dir $test_suite > $tests_file
-
 echo "Started unning tests."
 
 if [ ! -d "$tests_dir/.testrepository" ]; then
@@ -39,6 +36,9 @@ if [ ! -d "$tests_dir/.testrepository" ]; then
     testr init
     pop_dir
 fi
+
+tests_file=$(tempfile)
+$basedir/get-tests.sh $project_name $tests_dir $test_suite > $tests_file
 
 $basedir/parallel-test-runner.sh $tests_file $tests_dir $log_file \
     $parallel_tests $max_attempts || true
