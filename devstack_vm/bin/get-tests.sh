@@ -20,8 +20,11 @@ project=$1
 tests_dir=$2
 test_suite=${3:-"default"}
 
+include_tests_file="/home/ubuntu/bin/included-tests.txt"
 exclude_tests_file="/home/ubuntu/bin/excluded-tests.txt"
 isolated_tests_file="/home/ubuntu/bin/isolated-tests.txt"
+
+include_tests=(`awk 'NF && $1!~/^#/' $include_tests_file`)
 
 if [ -f "$exclude_tests_file" ]; then
     exclude_tests=(`awk 'NF && $1!~/^#/' $exclude_tests_file`)
@@ -32,21 +35,13 @@ if [ -f "$isolated_tests_file" ]; then
 fi
 
 exclude_tests=( ${exclude_tests[@]} ${isolated_tests[@]} )
-exclude_regex=$(array_to_regex ${exclude_tests[@]})
 
-cd $tests_dir
+include_regex=$(array_to_regex ${include_tests[@]})
+exclude_regex=$(array_to_regex ${exclude_tests[@]})
 
 if [ ! "$exclude_regex" ]; then
     exclude_regex='^$'
 fi
 
-
-if [[ $project == "nova" ]]; then
-    testr list-tests | grep -v $exclude_regex
-elif [[ $project == "neutron" ]]; then
-
-    testr list-tests | grep "tempest.api.network" | grep -v $exclude_regex
-else
-    echo "ERROR: Cannot test for project $project"
-    exit 1
-fi
+cd $tests_dir
+testr list-tests | grep $include_regex | grep -v $exclude_regex
