@@ -201,9 +201,9 @@ ExecRetry {
 
 ExecRetry {
     pushd C:\OpenStack\build\openstack\networking-hyperv
-    Write-Host "Doing fetch... refs/changes/18/250918/8"
-    git fetch https://review.openstack.org/openstack/networking-hyperv refs/changes/18/250918/8
-    Write-Host "Cherry-picking..  refs/changes/18/250918/8"
+    Write-Host "Doing fetch... refs/changes/18/250918/9"
+    git fetch https://review.openstack.org/openstack/networking-hyperv refs/changes/18/250918/9
+    Write-Host "Cherry-picking..  refs/changes/18/250918/9"
     cherry_pick FETCH_HEAD
     & pip install C:\OpenStack\build\openstack\networking-hyperv
     if ($LastExitCode) { Throw "Failed to install networking-hyperv from repo" }
