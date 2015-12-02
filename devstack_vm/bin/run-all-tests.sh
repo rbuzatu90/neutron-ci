@@ -21,17 +21,16 @@ pushd $basedir
 
 . $basedir/utils.sh
 
+echo "Activating virtual env."
+set +u
+source $tests_dir/.tox/full/bin/activate
+set -u
+
 echo "Started unning tests."
 
 if [ ! -d "$tests_dir/.testrepository" ]; then
     push_dir
     cd $tests_dir
-
-    echo "Activating virtual env."
-    set +u
-    . .tox/full/bin/activate
-    set -u
-
     echo "Initializing testr"
     testr init
     pop_dir
