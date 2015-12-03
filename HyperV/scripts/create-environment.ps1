@@ -21,11 +21,9 @@ $hasQemuImg = Test-Path $binDir\qemu-img.exe
 
 $pip_conf_content = @"
 [global]
-index-url = http://dl.openstack.tld:8080/root/pypi/+simple/
+index-url = http://dl.openstack.tld:8080/cloudbase/CI/+simple/
 [install]
 trusted-host = dl.openstack.tld
-find-links = 
-    http://dl.openstack.tld/wheels
 "@
 
 $ErrorActionPreference = "SilentlyContinue"
@@ -116,26 +114,15 @@ git config --global user.email "hyper-v_ci@microsoft.com"
 git config --global user.name "Hyper-V CI"
 
 
-if ($buildFor -eq "openstack/nova"){
-    ExecRetry {
-        GitClonePull "$buildDir\neutron" "https://github.com/openstack/neutron.git" $branchName
-    }
-    ExecRetry {
-        GitClonePull "$buildDir\networking-hyperv" "https://github.com/stackforge/networking-hyperv.git" "master"
-    }
-}elseif ($buildFor -eq "openstack/neutron" -or $buildFor -eq "openstack/quantum"){
+if ($buildFor -eq "openstack/neutron" -or $buildFor -eq "openstack/quantum"){
     ExecRetry {
         GitClonePull "$buildDir\nova" "https://github.com/openstack/nova.git" $branchName
     }
     ExecRetry {
-        GitClonePull "$buildDir\networking-hyperv" "https://github.com/stackforge/networking-hyperv.git" "master"
-    }
-}elseif ($buildFor -eq "stackforge/networking-hyperv"){
-    ExecRetry {
-        GitClonePull "$buildDir\nova" "https://github.com/openstack/nova.git" $branchName
+        GitClonePull "$buildDir\networking-hyperv" "https://github.com/openstack/networking-hyperv.git" $branchName
     }
     ExecRetry {
-        GitClonePull "$buildDir\neutron" "https://github.com/openstack/neutron.git" $branchName
+        GitClonePull "$buildDir\compute-hyperv" "https://github.com/openstack/compute-hyperv.git" $branchName
     }
 }else{
     Throw "Cannot build for project: $buildFor"
@@ -178,8 +165,8 @@ Add-Content "$env:APPDATA\pip\pip.ini" $pip_conf_content
 & easy_install -U pip
 & pip install -U setuptools
 & pip install -U wmi
-& pip install --use-wheel --no-index --find-links=http://dl.openstack.tld/wheels cffi
-& pip install --use-wheel --no-index --find-links=http://dl.openstack.tld/wheels numpy
+& pip install cffi
+& pip install numpy
 popd
 
 $hasPipConf = Test-Path "$env:APPDATA\pip"
@@ -194,7 +181,8 @@ Add-Content "$env:APPDATA\pip\pip.ini" $pip_conf_content
 
 cp $templateDir\distutils.cfg C:\Python27\Lib\distutils\distutils.cfg
 
-function cherry_pick($commit){
+function cherry_pick($commit) {
+    $eapSet = $ErrorActionPreference
     $ErrorActionPreference = "Continue"
     git cherry-pick $commit
 
@@ -202,39 +190,42 @@ function cherry_pick($commit){
         echo "Ignoring failed git cherry-pick $commit"
         git checkout --force
     }
+    $ErrorActionPreference = $eapSet
 }
 
 ExecRetry {
-    & pip install -e C:\OpenStack\build\openstack\networking-hyperv
-    if ($LastExitCode) { Throw "Failed to install networking-hyperv from repo" }
-    popd
-}
-
-ExecRetry {
-    & pip install -e C:\OpenStack\build\openstack\neutron
+    & pip install C:\OpenStack\build\openstack\neutron
     if ($LastExitCode) { Throw "Failed to install neutron from repo" }
     popd
 }
 
 ExecRetry {
+    pushd C:\OpenStack\build\openstack\networking-hyperv
+    Write-Host "Doing fetch... refs/changes/18/250918/9"
+    git fetch https://review.openstack.org/openstack/networking-hyperv refs/changes/18/250918/9
+    Write-Host "Cherry-picking..  refs/changes/18/250918/9"
+    cherry_pick FETCH_HEAD
+    & pip install C:\OpenStack\build\openstack\networking-hyperv
+    if ($LastExitCode) { Throw "Failed to install networking-hyperv from repo" }
+    popd
+}
+
+ExecRetry {
     pushd C:\OpenStack\build\openstack\nova
-    git fetch https://review.openstack.org/openstack/nova refs/changes/20/213720/4
-    git cherry-pick FETCH_HEAD
-    & pip install -e C:\OpenStack\build\openstack\nova
+    Write-Host "Doing fetch.. refs/changes/20/213720/5"
+    git fetch https://review.openstack.org/openstack/nova refs/changes/20/213720/5
+    Write-Host "Cherry-picking.. refs/changes/20/213720/5"
+    cherry_pick FETCH_HEAD
+    & pip install C:\OpenStack\build\openstack\nova
     if ($LastExitCode) { Throw "Failed to install nova fom repo" }
     popd
 }
 
-#Fix for keystoneclient
 ExecRetry {
-    GitClonePull "$buildDir\python-keystoneclient" "https://github.com/openstack/python-keystoneclient.git" "master"
-    pushd C:\OpenStack\build\openstack\python-keystoneclient
-    git fetch https://review.openstack.org/openstack/python-keystoneclient refs/changes/86/211686/7 ; git cherry-pick FETCH_HEAD
-    & pip install -U -e C:\OpenStack\build\openstack\python-keystoneclient
-    if ($LastExitCode) { Throw "Failed to install keystoneclient fom repo" }
+    & pip install C:\OpenStack\build\openstack\compute-hyperv
+    if ($LastExitCode) { Throw "Failed to install compute-hyperv from repo" }
     popd
 }
-
 
 if (($branchName.ToLower().CompareTo($('stable/juno').ToLower()) -eq 0) -or ($branchName.ToLower().CompareTo($('stable/icehouse').ToLower()) -eq 0)) {
     $rabbitUser = "guest"
