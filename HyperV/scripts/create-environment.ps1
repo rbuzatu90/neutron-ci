@@ -194,7 +194,8 @@ function cherry_pick($commit) {
 }
 
 ExecRetry {
-    & pip install C:\OpenStack\build\openstack\neutron
+    pushd C:\OpenStack\build\openstack\neutron
+    & python setup.py install
     if ($LastExitCode) { Throw "Failed to install neutron from repo" }
     popd
 }
@@ -222,6 +223,7 @@ ExecRetry {
 }
 
 ExecRetry {
+    pushd C:\OpenStack\build\openstack\compute-hyperv
     & pip install C:\OpenStack\build\openstack\compute-hyperv
     if ($LastExitCode) { Throw "Failed to install compute-hyperv from repo" }
     popd
