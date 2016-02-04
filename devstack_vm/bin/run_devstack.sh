@@ -27,6 +27,12 @@ sudo pip install -U six
 sudo pip install -U kombu
 sudo pip install -U pbr
 
+branch=`git -C /home/ubuntu/devstack rev-parse --abbrev-ref HEAD`
+if [ "$branch" == "stable/kilo" ]
+then
+	sudo pip install -U testtools==1.9.0
+fi
+
 DEVSTACK_LOGS="/opt/stack/logs/screen"
 LOCALRC="/home/ubuntu/devstack/localrc"
 LOCALCONF="/home/ubuntu/devstack/local.conf"
