@@ -214,13 +214,13 @@ function cherry_pick($commit) {
 
 Write-Host "BuildDir is: $buildDir"
 Write-Host "ProjectName is: $projectName"
-Write-Host "Listing $buildDir parent directory:"
+Write-Host "Listing $buildDir parent directory"
 Get-ChildItem ( Get-Item $buildDir ).Parent.FullName
-Write-Host "Listing $buildDir:"
+Write-Host "Listing $buildDir"
 Get-ChildItem $buildDir
 
 ExecRetry {
-    Write-Host "Content of $buildDir\$projectName:"
+    Write-Host "Content of $buildDir\$projectName"
     Get-ChildItem $buildDir\$projectName
     pushd $buildDir\$projectName
     & pip install $buildDir\$projectName
@@ -229,7 +229,7 @@ ExecRetry {
 }
 
 ExecRetry {
-    Write-Host "Content of $buildDir\networking-hyperv:"
+    Write-Host "Content of $buildDir\networking-hyperv"
     Get-ChildItem $buildDir\networking-hyperv
     pushd $buildDir\networking-hyperv
     & pip install $buildDir\networking-hyperv
@@ -238,7 +238,7 @@ ExecRetry {
 }
 
 ExecRetry {
-    Write-Host "Content of $buildDir\nova:"
+    Write-Host "Content of $buildDir\nova"
     Get-ChildItem $buildDir\nova
     pushd $buildDir\nova
     & pip install $buildDir\nova
@@ -247,7 +247,7 @@ ExecRetry {
 }
 
 ExecRetry {
-    Write-Host "Content of $buildDir\compute-hyperv:"
+    Write-Host "Content of $buildDir\compute-hyperv"
     Get-ChildItem $buildDir\compute-hyperv
     pushd $buildDir\compute-hyperv
     & pip install $buildDir\compute-hyperv
