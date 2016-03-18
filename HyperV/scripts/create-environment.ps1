@@ -212,11 +212,12 @@ function cherry_pick($commit) {
     $ErrorActionPreference = $eapSet
 }
 
+Write-Host "Listing content of " ( Get-Item $buildDir ).Parent.FullName
 ls ( Get-Item $buildDir ).Parent.FullName
+Write-Host "Listing content of " $buildDir
 ls $buildDir
 
 ExecRetry {
-    ls $buildDir\$projectName
     pushd $buildDir\$projectName
     & pip install $buildDir\$projectName
     ls $buildDir\$projectName
@@ -225,7 +226,6 @@ ExecRetry {
 }
 
 ExecRetry {
-    ls $buildDir\networking-hyperv
     pushd $buildDir\networking-hyperv
     & pip install $buildDir\networking-hyperv
     ls $buildDir\networking-hyperv
@@ -234,7 +234,6 @@ ExecRetry {
 }
 
 ExecRetry {
-    ls $buildDir\nova
     pushd $buildDir\nova
     & pip install $buildDir\nova
     ls $buildDir\nova
@@ -243,7 +242,6 @@ ExecRetry {
 }
 
 ExecRetry {
-    ls $buildDir\compute-hyperv
     pushd $buildDir\compute-hyperv
     & pip install $buildDir\compute-hyperv
     ls $buildDir\compute-hyperv
