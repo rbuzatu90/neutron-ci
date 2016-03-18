@@ -102,6 +102,7 @@ then
     else
         git clone $GIT_ORIGIN/$ZUUL_PROJECT .
     fi
+    ls -a
 fi
 git remote set-url origin $GIT_ORIGIN/$ZUUL_PROJECT
 

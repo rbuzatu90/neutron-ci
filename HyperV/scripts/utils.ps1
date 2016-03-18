@@ -32,6 +32,7 @@ function ExecRetry($command, $maxRetryCount = 10, $retryInterval=2)
 
 function GitClonePull($path, $url, $branch="master")
 {
+    Write-Host "Calling GitClonePull with $path, $url, $branch"
     if (!(Test-Path -path $path))
     {
         ExecRetry {
@@ -47,7 +48,7 @@ function GitClonePull($path, $url, $branch="master")
         try
         {
             ExecRetry {
-                Remove-Item -Force -Recurse -ErrorAction SilentlyContinue "$path\*"
+                Remove-Item -Force -Recurse "$path\*"
                 git clone $url $path
                 if ($LastExitCode) { throw "git clone failed - GitClonePull - After removing existing Path.." }
             }
