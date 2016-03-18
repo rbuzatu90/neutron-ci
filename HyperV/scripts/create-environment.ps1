@@ -83,6 +83,7 @@ if ($hasConfigDir -eq $false) {
 }
 
 if ($hasProject -eq $false){
+    ls $buildDir
     Throw "$projectName repository was not found. Please run gerrit-git-pref for this project first"
 }
 
@@ -211,15 +212,19 @@ function cherry_pick($commit) {
 }
 
 ExecRetry {
+    ls C:\OpenStack\build\openstack\neutron
     pushd C:\OpenStack\build\openstack\neutron
     & pip install C:\OpenStack\build\openstack\neutron
+    ls C:\OpenStack\build\openstack\networking-hyper
     if ($LastExitCode) { Throw "Failed to install neutron from repo" }
     popd
 }
 
 ExecRetry {
+    ls C:\OpenStack\build\openstack\networking-hyperv
     pushd C:\OpenStack\build\openstack\networking-hyperv
     & pip install C:\OpenStack\build\openstack\networking-hyperv
+    ls C:\OpenStack\build\openstack\networking-hyper
     if ($LastExitCode) { Throw "Failed to install networking-hyperv from repo" }
     popd
 }
