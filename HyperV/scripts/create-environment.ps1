@@ -224,7 +224,7 @@ ExecRetry {
     ls C:\OpenStack\build\openstack\networking-hyperv
     pushd C:\OpenStack\build\openstack\networking-hyperv
     & pip install C:\OpenStack\build\openstack\networking-hyperv
-    ls C:\OpenStack\build\openstack\networking-hyper
+    ls C:\OpenStack\build\openstack\networking-hyperv
     if ($LastExitCode) { Throw "Failed to install networking-hyperv from repo" }
     popd
 }
