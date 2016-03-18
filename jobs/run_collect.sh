@@ -57,16 +57,6 @@ ssh -o "UserKnownHostsFile /dev/null" -o "StrictHostKeyChecking no" -i $DEVSTACK
 
 if [ "$IS_DEBUG_JOB" != "yes" ]
 	then
-		jen_date=$(date +%d/%m/%Y-%H:%M:%S)
-		echo "Detaching and cleaning Hyper-V node 1"
-		teardown_hyperv $hyperv01 $WIN_USER $WIN_PASS
-		echo "$jen_date;$ZUUL_PROJECT;$ZUUL_BRANCH;$ZUUL_CHANGE;$ZUUL_PATCHSET;$hyperv01;FREE" >> /home/jenkins-slave/hypervnodes.log
-		
-		jen_date=$(date +%d/%m/%Y-%H:%M:%S)
-		echo "Detaching and cleaning Hyper-V node 2"
-		teardown_hyperv $hyperv02 $WIN_USER $WIN_PASS
-		echo "$jen_date;$ZUUL_PROJECT;$ZUUL_BRANCH;$ZUUL_CHANGE;$ZUUL_PATCHSET;$hyperv02;FREE" >> /home/jenkins-slave/hypervnodes.log
-		
 		echo "Creating logs destination folder"
 		ssh -o "UserKnownHostsFile /dev/null" -o "StrictHostKeyChecking no" -i $LOGS_SSH_KEY logs@logs.openstack.tld "if [ -z '$ZUUL_CHANGE' ] || [ -z '$ZUUL_PATCHSET' ]; then echo 'Missing parameters!'; exit 1; elif [ ! -d /srv/logs/$logs_project/$ZUUL_CHANGE/$ZUUL_PATCHSET ]; then mkdir -p /srv/logs/$logs_project/$ZUUL_CHANGE/$ZUUL_PATCHSET; else rm -rf /srv/logs/$logs_project/$ZUUL_CHANGE/$ZUUL_PATCHSET/*; fi"
 
@@ -96,20 +86,11 @@ if [ "$IS_DEBUG_JOB" != "yes" ]
 		rm -fv /home/jenkins-slave/logs/hyperv-build-log-$ZUUL_UUID-$hyperv01
                 rm -fv /home/jenkins-slave/logs/hyperv-build-log-$ZUUL_UUID-$hyperv02
                 
-                echo "Removing temporary devstack log.."
-                rm -fv /home/jenkins-slave/logs/devstack-build-log-$ZUUL_UUID    
+        echo "Removing temporary devstack log.."
+        rm -fv /home/jenkins-slave/logs/devstack-build-log-$ZUUL_UUID    
+
+        rm -f /home/jenkins-slave/runs/devstack_params.$ZUUL_UUID.txt
    
-		echo "Releasing devstack floating IP"
-		nova remove-floating-ip "$VMID" "$FLOATING_IP"
-		
-    		echo "Removing devstack VM"
-		nova delete "$VMID"
-		/usr/local/src/neutron-ci/vlan_allocation.py -r $VMID
-		
-    		echo "Deleting devstack floating IP"
-		nova floating-ip-delete "$FLOATING_IP"
-		rm -f /home/jenkins-slave/runs/devstack_params.$ZUUL_UUID.txt
-	  
   	else
 		TIMESTAMP=$(date +%d-%m-%Y_%H-%M)
         	echo "Creating logs destination folder"
