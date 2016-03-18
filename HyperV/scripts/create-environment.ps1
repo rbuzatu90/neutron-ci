@@ -115,17 +115,22 @@ if ($hasNeutronTemplate -eq $false){
 git config --global user.email "hyper-v_ci@microsoft.com"
 git config --global user.name "Hyper-V CI"
 
+Write-Host "Status of $buildDir before GitClonePull"
+Get-ChildItem $buildDir
 
 if ($buildFor -eq "openstack/neutron"){
     ExecRetry {
         GitClonePull "$buildDir\nova" "https://git.openstack.org/openstack/nova.git" $branchName
     }
+    Get-ChildItem $buildDir
     ExecRetry {
         GitClonePull "$buildDir\networking-hyperv" "https://git.openstack.org/openstack/networking-hyperv.git" $branchName
     }
+    Get-ChildItem $buildDir
     ExecRetry {
         GitClonePull "$buildDir\compute-hyperv" "https://git.openstack.org/openstack/compute-hyperv.git" $branchName
     }
+    Get-ChildItem $buildDir
 }else{
     Throw "Cannot build for project: $buildFor"
 }
@@ -216,7 +221,7 @@ Write-Host "BuildDir is: $buildDir"
 Write-Host "ProjectName is: $projectName"
 Write-Host "Listing $buildDir parent directory"
 Get-ChildItem ( Get-Item $buildDir ).Parent.FullName
-Write-Host "Listing $buildDir"
+Write-Host "Listing $buildDir before install"
 Get-ChildItem $buildDir
 
 ExecRetry {
