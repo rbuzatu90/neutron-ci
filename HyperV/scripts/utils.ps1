@@ -41,6 +41,7 @@ function GitClonePull($path, $url, $branch="master")
         }
         pushd $path
         git checkout $branch
+        git pull
         popd
         if ($LastExitCode) { throw "git checkout failed - GitCLonePull - Path does not exist!" }
     }else{
@@ -53,7 +54,7 @@ function GitClonePull($path, $url, $branch="master")
                 if ($LastExitCode) { throw "git clone failed - GitClonePull - After removing existing Path.." }
             }
             ExecRetry {
-                (git checkout $branch) -Or (git checkout master)
+                git checkout $branch
                 if ($LastExitCode) { throw "git checkout failed - GitClonePull - After removing existing Path.." }
             }
 
