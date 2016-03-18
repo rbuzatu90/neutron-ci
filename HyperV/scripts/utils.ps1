@@ -32,7 +32,7 @@ function ExecRetry($command, $maxRetryCount = 10, $retryInterval=2)
 
 function GitClonePull($path, $url, $branch="master")
 {
-    Write-Host "Calling GitClonePull with $path, $url, $branch"
+    Write-Host "Calling GitClonePull with path=$path, url=$url, branch=$branch"
     if (!(Test-Path -path $path))
     {
         ExecRetry {

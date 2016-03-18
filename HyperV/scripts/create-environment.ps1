@@ -212,14 +212,14 @@ function cherry_pick($commit) {
     $ErrorActionPreference = $eapSet
 }
 
+ls ( Get-Item $buildDir ).Parent.FullName
+ls $buildDir
+
 ExecRetry {
-    ls ( Get-Item $buildDir ).Parent.FullName
-    ls $buildDir
-    ls $buildDir/$projectName
-    pushd $buildDir/$projectName
-    & pip install $buildDir/$projectName
-    ls $buildDir
-    ls $buildDir/$projectName
+    ls $buildDir\$projectName
+    pushd $buildDir\$projectName
+    & pip install $buildDir\$projectName
+    ls $buildDir\$projectName
     if ($LastExitCode) { Throw "Failed to install neutron from repo" }
     popd
 }
@@ -234,15 +234,19 @@ ExecRetry {
 }
 
 ExecRetry {
+    ls $buildDir\nova
     pushd $buildDir\nova
     & pip install $buildDir\nova
+    ls $buildDir\nova
     if ($LastExitCode) { Throw "Failed to install nova fom repo" }
     popd
 }
 
 ExecRetry {
+    ls $buildDir\compute-hyperv
     pushd $buildDir\compute-hyperv
     & pip install $buildDir\compute-hyperv
+    ls $buildDir\compute-hyperv
     if ($LastExitCode) { Throw "Failed to install compute-hyperv from repo" }
     popd
 }
@@ -268,7 +272,7 @@ if ($hasNovaExec -eq $false){
     Throw "No nova exe found"
 }
 
-$hasNeutronExec = Test-Path "pythonScripts\neutron-hyperv-agent.exe"
+$hasNeutronExec = Test-Path "$pythonScripts\neutron-hyperv-agent.exe"
 if ($hasNeutronExec -eq $false){
     Throw "No neutron exe found"
 }
