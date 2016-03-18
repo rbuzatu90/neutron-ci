@@ -76,11 +76,7 @@ then
     echo "Triggered by: $GERRIT_SITE/$ZUUL_CHANGE"
 fi
 
-if [ -d "$BUILD_DIR" ]
-then
-  rm -rf "$BUILD_DIR"
-fi
-mkdir -p "$BUILD_DIR" || exit_error "Failed to create build dir"
+ls -a "$BUILD_DIR" || exit_error "Build dir doesnt exist"
 
 if [ -d "$PROJECT_DIR" ]
 then
@@ -94,7 +90,7 @@ set -x
 
 if [[ ! -e .git ]]
 then
-    ls -a
+    ls -a && pwd
     rm -fr .[^.]* *
     if [ -d /opt/git/$ZUUL_PROJECT/.git ]
     then
@@ -102,7 +98,7 @@ then
     else
         git clone $GIT_ORIGIN/$ZUUL_PROJECT .
     fi
-    ls -a
+    ls -a && pwd
 fi
 git remote set-url origin $GIT_ORIGIN/$ZUUL_PROJECT
 

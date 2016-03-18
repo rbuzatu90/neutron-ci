@@ -48,7 +48,7 @@ function GitClonePull($path, $url, $branch="master")
         try
         {
             ExecRetry {
-                Remove-Item -Force -Recurse "$path\*"
+                Remove-Item -Force -Recurse -ErrorAction SilentlyContinue "$path\*"
                 git clone $url $path
                 if ($LastExitCode) { throw "git clone failed - GitClonePull - After removing existing Path.." }
             }
