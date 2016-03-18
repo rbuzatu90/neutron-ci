@@ -14,10 +14,12 @@ $neutronTemplate = "$templateDir\neutron_hyperv_agent.conf"
 $hostname = hostname
 $rabbitUser = "stackrabbit"
 $pythonDir = "C:\Python27"
+$pythonScripts = "$pythonDir\Scripts"
 $pythonArchive = "python27new.tar.gz"
 $pythonTar = "python27new.tar"
 $pythonExec = "$pythonDir\python.exe"
 $openstackLogs="$openstackDir\Log"
+$7zExec = "C:\Program Files\7-Zip\7z.exe"
 $remoteLogs="\\"+$devstackIP+"\openstack\logs"
 $remoteConfigs="\\"+$devstackIP+"\openstack\config"
 
