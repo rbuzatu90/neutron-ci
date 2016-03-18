@@ -90,7 +90,9 @@ set -x
 
 if [[ ! -e .git ]]
 then
-    ls -a && pwd
+    echo "Print working dir and listing project dir $PROJECT_DIR"
+    pwd
+    ls -a
     rm -fr .[^.]* *
     if [ -d /opt/git/$ZUUL_PROJECT/.git ]
     then
@@ -98,7 +100,9 @@ then
     else
         git clone $GIT_ORIGIN/$ZUUL_PROJECT .
     fi
-    ls -a && pwd
+    echo "Print working dir and listing project dir $PROJECT_DIR after git clone"
+    pwd
+    ls -a
 fi
 git remote set-url origin $GIT_ORIGIN/$ZUUL_PROJECT
 
