@@ -83,8 +83,8 @@ if ($hasConfigDir -eq $false) {
 }
 
 if ($hasProject -eq $false){
-    ls $buildDir
-    ls ( Get-Item $buildDir ).Parent.FullName
+    Get-ChildItem $buildDir
+    Get-ChildItem ( Get-Item $buildDir ).Parent.FullName
     Throw "$projectName repository was not found. Please run gerrit-git-pref for this project first"
 }
 
@@ -116,7 +116,7 @@ git config --global user.email "hyper-v_ci@microsoft.com"
 git config --global user.name "Hyper-V CI"
 
 
-if ($buildFor -eq "openstack/neutron" -or $buildFor -eq "openstack/quantum"){
+if ($buildFor -eq "openstack/neutron"){
     ExecRetry {
         GitClonePull "$buildDir\nova" "https://git.openstack.org/openstack/nova.git" $branchName
     }
@@ -212,41 +212,45 @@ function cherry_pick($commit) {
     $ErrorActionPreference = $eapSet
 }
 
-ls ( Get-Item $buildDir ).Parent.FullName
-ls $buildDir
+Write-Host "BuildDir is: $buildDir"
+Write-Host "ProjectName is: $projectName"
+Write-Host "Listing $buildDir parent directory:"
+Get-ChildItem ( Get-Item $buildDir ).Parent.FullName
+Write-Host "Listing $buildDir:"
+Get-ChildItem $buildDir
 
 ExecRetry {
-    ls $buildDir\$projectName
+    Write-Host "Content of $buildDir\$projectName:"
+    Get-ChildItem $buildDir\$projectName
     pushd $buildDir\$projectName
     & pip install $buildDir\$projectName
-    ls $buildDir\$projectName
     if ($LastExitCode) { Throw "Failed to install neutron from repo" }
     popd
 }
 
 ExecRetry {
-    ls $buildDir\networking-hyperv
+    Write-Host "Content of $buildDir\networking-hyperv:"
+    Get-ChildItem $buildDir\networking-hyperv
     pushd $buildDir\networking-hyperv
     & pip install $buildDir\networking-hyperv
-    ls $buildDir\networking-hyperv
     if ($LastExitCode) { Throw "Failed to install networking-hyperv from repo" }
     popd
 }
 
 ExecRetry {
-    ls $buildDir\nova
+    Write-Host "Content of $buildDir\nova:"
+    Get-ChildItem $buildDir\nova
     pushd $buildDir\nova
     & pip install $buildDir\nova
-    ls $buildDir\nova
     if ($LastExitCode) { Throw "Failed to install nova fom repo" }
     popd
 }
 
 ExecRetry {
-    ls $buildDir\compute-hyperv
+    Write-Host "Content of $buildDir\compute-hyperv:"
+    Get-ChildItem $buildDir\compute-hyperv
     pushd $buildDir\compute-hyperv
     & pip install $buildDir\compute-hyperv
-    ls $buildDir\compute-hyperv
     if ($LastExitCode) { Throw "Failed to install compute-hyperv from repo" }
     popd
 }
@@ -256,12 +260,12 @@ $neutronConfig = (gc "$templateDir\neutron_hyperv_agent.conf").replace('[DEVSTAC
 
 Set-Content $configDir\nova.conf $novaConfig
 if ($? -eq $false){
-    Throw "Error writting $templateDir\nova.conf"
+    Throw "Error writting $configDir\nova.conf"
 }
 
 Set-Content $configDir\neutron_hyperv_agent.conf $neutronConfig
 if ($? -eq $false){
-    Throw "Error writting neutron_hyperv_agent.conf"
+    Throw "Error writting $configDir\neutron_hyperv_agent.conf"
 }
 
 cp "$templateDir\policy.json" "$configDir\"
