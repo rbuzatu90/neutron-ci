@@ -40,7 +40,10 @@ fi
 echo "Starting gerrit-gitprep"
 BUILD_DIR="C:/OpenStack/build/"
 echo "BUILD_DIR=$BUILD_DIR"
-PROJECT_DIR="$BUILD_DIR/$ZUUL_PROJECT"
+echo "ZUUL_PROJECT=$ZUUL_PROJECT"
+PROJECT_NAME=`basename $ZUUL_PROJECT`
+echo "PROJECT=$PROJECT_NAME"
+PROJECT_DIR="$BUILD_DIR/$PROJECT"
 echo "PROJECT_DIR=$PROJECT_DIR"
 
 function exit_error(){
@@ -79,7 +82,7 @@ then
 fi
 
 echo "Content of $BUILD_DIR"
-ls -a "$BUILD_DIR" || exit_error "Build dir doesnt exist"
+ls -a "$BUILD_DIR" || exit_error "Build dir does not exist"
 
 echo "Removing $PROJECT_DIR if it exists"
 if [ -d "$PROJECT_DIR" ]
