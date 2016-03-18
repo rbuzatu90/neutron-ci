@@ -38,7 +38,7 @@ then
     exit 1
 fi
 echo "Starting gerrit-gitprep"
-BUILD_DIR="C:/OpenStack/build/"
+BUILD_DIR="C:/OpenStack/build"
 echo "BUILD_DIR=$BUILD_DIR"
 echo "ZUUL_PROJECT=$ZUUL_PROJECT"
 PROJECT_NAME=`basename $ZUUL_PROJECT`
