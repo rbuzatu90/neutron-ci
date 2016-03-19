@@ -1,3 +1,10 @@
+source /home/jenkins-slave/tools/keystonerc_admin
+source /usr/local/src/neutron-ci/jobs/library.sh
+
+logs_project=neutron
+
+set +e
+
 if [ "$IS_DEBUG_JOB" != "yes" ]
     then
         jen_date=$(date +%d/%m/%Y-%H:%M:%S)
@@ -21,3 +28,5 @@ if [ "$IS_DEBUG_JOB" != "yes" ]
         nova floating-ip-delete "$FLOATING_IP"
       
 fi
+
+set -e
