@@ -1,3 +1,4 @@
+source /home/jenkins-slave/runs/devstack_params.$ZUUL_UUID.txt
 source /home/jenkins-slave/tools/keystonerc_admin
 source /usr/local/src/neutron-ci/jobs/library.sh
 
