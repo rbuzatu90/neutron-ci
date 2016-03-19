@@ -20,9 +20,9 @@ result_collect=$?
 echo "Collect logs job finished with exit code $result_collect"
 
 if [ $result_init -eq 0 ] && [ $result_tempest -eq 0 ]; then
-    $result = 0
+    result=0
 else
-    $result = 1
+    result=1
 fi
 
 set -e
