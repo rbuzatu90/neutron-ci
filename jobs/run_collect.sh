@@ -89,8 +89,6 @@ if [ "$IS_DEBUG_JOB" != "yes" ]
                 
         echo "Removing temporary devstack log.."
         rm -fv /home/jenkins-slave/logs/devstack-build-log-$ZUUL_UUID    
-
-        rm -f /home/jenkins-slave/runs/devstack_params.$ZUUL_UUID.txt
    
   	else
 		TIMESTAMP=$(date +%d-%m-%Y_%H-%M)
