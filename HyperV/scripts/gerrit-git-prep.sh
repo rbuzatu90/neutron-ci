@@ -37,6 +37,7 @@ then
     echo "ZUUL_REF ZUUL_CHANGE ZUUL_PROJECT are mandatory"
     exit 1
 fi
+
 echo "Starting gerrit-gitprep"
 BUILD_DIR="C:/OpenStack/build"
 echo "BUILD_DIR=$BUILD_DIR"
@@ -81,6 +82,11 @@ then
     echo "Triggered by: $GERRIT_SITE/$ZUUL_CHANGE"
 fi
 
+if [ ! -d "$BUILD_DIR" ]
+then
+  mkdir -p "$BUILD_DIR"
+  echo "Created $BUILD_DIR"
+fi
 echo "Content of $BUILD_DIR"
 ls -a "$BUILD_DIR" || exit_error "Build dir does not exist"
 
