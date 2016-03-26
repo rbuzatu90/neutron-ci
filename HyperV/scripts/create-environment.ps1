@@ -93,7 +93,7 @@ if ($hasConfigDir -eq $false) {
 if ($hasProject -eq $false){
     Get-ChildItem $buildDir
     Get-ChildItem ( Get-Item $buildDir ).Parent.FullName
-    Throw "$projectName repository was not found. Please run gerrit-git-pref for this project first"
+    Throw "$projectName repository was not found. Please run gerrit-git-prep.sh for this project first"
 }
 
 if ($hasBinDir -eq $false){
@@ -123,8 +123,10 @@ if ($hasNeutronTemplate -eq $false){
 git config --global user.email "hyper-v_ci@microsoft.com"
 git config --global user.name "Hyper-V CI"
 
-Write-Host "Status of $buildDir before GitClonePull"
-Get-ChildItem $buildDir
+if ($isDebug -eq  'yes') {
+    Write-Host "Status of $buildDir before GitClonePull"
+    Get-ChildItem $buildDir
+}
 
 if ($buildFor -eq "openstack/neutron"){
     ExecRetry {
@@ -296,12 +298,12 @@ cp "$templateDir\interfaces.template" "$configDir\"
 
 $hasNovaExec = Test-Path "$pythonScripts\nova-compute.exe"
 if ($hasNovaExec -eq $false){
-    Throw "No nova exe found"
+    Throw "No nova-compute.exe found"
 }
 
 $hasNeutronExec = Test-Path "$pythonScripts\neutron-hyperv-agent.exe"
 if ($hasNeutronExec -eq $false){
-    Throw "No neutron exe found"
+    Throw "No neutron-hyperv-agent.exe found"
 }
 
 
