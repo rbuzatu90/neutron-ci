@@ -189,7 +189,7 @@ Add-Content "$env:APPDATA\pip\pip.ini" $pip_conf_content
 & pip install -U --pre pymi
 & pip install cffi
 & pip install numpy
-& pip install -U cliff==1.15.0
+& pip install oslo.messaging==4.5.0
 
 # Temporary fix for stable/liberty, forcing ryu==3.26
 if (($branchName.ToLower().CompareTo($('stable/liberty').ToLower()) -eq 0)) {
