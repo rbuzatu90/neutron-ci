@@ -134,7 +134,12 @@ if ($buildFor -eq "openstack/neutron"){
     }
     Get-ChildItem $buildDir
     ExecRetry {
-        GitClonePull "$buildDir\networking-hyperv" "https://git.openstack.org/openstack/networking-hyperv.git" $branchName
+        if (($branchName.ToLower().CompareTo($('stable/mitaka').ToLower()) -eq 0)) {
+            GitClonePull "$buildDir\networking-hyperv" "https://git.openstack.org/openstack/networking-hyperv.git" "master"
+        }
+        else {
+           GitClonePull "$buildDir\networking-hyperv" "https://git.openstack.org/openstack/networking-hyperv.git" $branchName
+        }
     }
     Get-ChildItem $buildDir
     ExecRetry {
