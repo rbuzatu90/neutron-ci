@@ -74,8 +74,7 @@ export FIXED_IP="${FIXED_IP//,}"
 
 COUNT=1
 while [ -z "$FIXED_IP" ]; do
-    if [ $COUNT -lt 10 ]
-    then
+    if [ $COUNT -lt 10 ]; then
         sleep 15
         FIXED_IP=$(nova show "$VMID" | grep "private network" | awk '{print $5}')
         export FIXED_IP="${FIXED_IP//,}"
