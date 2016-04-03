@@ -45,8 +45,6 @@ echo FLOATING_IP=$FLOATING_IP
 echo NAME=$NAME
 echo NET_ID=$NET_ID
 
-echo "Deploying devstack $NAME"
-
 devstack_image="devstack-76v1"
 
 echo "Image used is: $devstack_image"
@@ -59,7 +57,7 @@ export VMID=$VMID
 echo VMID=$VMID >>  /home/jenkins-slave/runs/devstack_params.$ZUUL_UUID.txt
 echo VMID=$VMID
 
-if [ $? -ne 0 ]; then
+if [ $NOVABOOT_EXIT -ne 0 ]; then
     echo "Failed to create devstack VM: $VMID"
     nova show "$VMID"
     exit 1
