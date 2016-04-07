@@ -23,4 +23,7 @@ $7zExec = "C:\Program Files\7-Zip\7z.exe"
 $remoteLogs="\\"+$devstackIP+"\openstack\logs"
 $remoteConfigs="\\"+$devstackIP+"\openstack\config"
 $eventlogPath="C:\OpenStack\Logs\Eventlog"
+$eventlogcsspath = "$templateDir\eventlog_css.txt"
+$eventlogjspath = "$templateDir\eventlog_js.txt"
 $downloadLocation = "http://dl.openstack.tld/"
+
