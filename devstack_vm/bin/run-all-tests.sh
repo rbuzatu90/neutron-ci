@@ -1,20 +1,7 @@
 #!/bin/bash
 
-project=${1:-"openstack/neutron"}
-tests_dir=${2:-"/opt/stack/tempest"}
-parallel_tests=${3:-8}
-max_attempts=${4:-3}
-test_suite=${5:-"default"}
-log_file=${6:-"/home/ubuntu/tempest/subunit-output.log"}
-results_html_file=${7:-"/home/ubuntu/tempest/results.html"}
-tempest_output_file="/home/ubuntu/tempest/tempest-output.log"
-subunit_stats_file="/home/ubuntu/tempest/subunit_stats.log"
-TEMPEST_DIR="/home/ubuntu/tempest"
-
-basedir="/home/ubuntu/bin"
-
-project_name=$(basename $project)
-
+basedir=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+. $basedir/config.sh
 mkdir -p $TEMPEST_DIR
 
 pushd $basedir
@@ -27,7 +14,7 @@ source $tests_dir/.tox/full/bin/activate
 set -u
 
 tests_file=$(tempfile)
-$basedir/get-tests.sh $project_name $tests_dir $test_suite > $tests_file
+$basedir/get-tests.sh $tests_dir > $tests_file
 
 echo "Started unning tests."
 
