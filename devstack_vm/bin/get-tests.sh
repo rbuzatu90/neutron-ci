@@ -18,7 +18,7 @@ array_to_regex()
     echo $regex
 }
 
-tests_dir=$2
+tests_dir=$1
 
 exclude_tests_file="$DIR/excluded-tests.txt"
 isolated_tests_file="$DIR/isolated-tests.txt"
