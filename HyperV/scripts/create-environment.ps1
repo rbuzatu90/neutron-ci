@@ -342,7 +342,8 @@ if ($(get-service nova-compute).Status -eq "Stopped")
     }
 }
 
-Write-Host "Starting neutron-hyperv-agent service"
+$currDate = (Get-Date).ToString()
+Write-Host "$currDate neutron-hyperv-agent service"
 Try
 {
     Start-Service neutron-hyperv-agent
