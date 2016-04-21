@@ -196,6 +196,10 @@ if (($branchName.ToLower().CompareTo($('stable/mitaka').ToLower()) -eq 0) -or ($
     & pip install Babel==2.2.0
 }
 
+if (($branchName.CompareTo('stable/kilo')) -eq 0) {
+    & pip install testresources==1.0.0
+}
+
 popd
 
 $hasPipConf = Test-Path "$env:APPDATA\pip"
