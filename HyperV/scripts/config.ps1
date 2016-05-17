@@ -25,5 +25,5 @@ $remoteConfigs="\\"+$devstackIP+"\openstack\config"
 $eventlogPath="C:\OpenStack\Logs\Eventlog"
 $eventlogcsspath = "$templateDir\eventlog_css.txt"
 $eventlogjspath = "$templateDir\eventlog_js.txt"
-$downloadLocation = "http://dl.openstack.tld/"
+$downloadLocation = "http://10.0.110.1/"
 
