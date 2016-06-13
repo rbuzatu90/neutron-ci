@@ -68,8 +68,7 @@ git pull
 ./unstack.sh
 
 screen_pid=$(ps auxw | grep -i screen | grep -v grep | awk '{print $2}')
-if [[ -n $screen_pid ]] 
-then
+if [[ -n $screen_pid ]]; then
     kill -9 $screen_pid
 fi
 
