@@ -193,6 +193,7 @@ Add-Content "$env:APPDATA\pip\pip.ini" $pip_conf_content
 & pip install numpy
 & pip install pycrypto
 & pip install amqp==1.4.9
+& pip install cffi==1.6.0
 
 if (($branchName.CompareTo('stable/kilo')) -eq 0) {
     & pip install testresources==1.0.0
