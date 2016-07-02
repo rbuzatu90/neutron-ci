@@ -39,7 +39,7 @@ iniset $TEMPEST_CONFIG compute-feature-enabled block_migration_for_live_migratio
 iniset $TEMPEST_CONFIG compute-feature-enabled live_migration True
 
 iniset $TEMPEST_CONFIG scenario img_dir "/home/ubuntu/devstack/files/images/"
-iniset $TEMPEST_CONFIG scenario img_file "cirros-0.3.3-x86_64.vhdx"
+iniset $TEMPEST_CONFIG scenario img_file "cirros-0.3.4-x86_64.vhdx"
 iniset $TEMPEST_CONFIG scenario img_disk_format vhd
 
 IMAGE_REF=`iniget $TEMPEST_CONFIG compute image_ref`
