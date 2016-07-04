@@ -189,15 +189,6 @@ Add-Content "$env:APPDATA\pip\pip.ini" $pip_conf_content
 & easy_install -U pip
 & pip install -U setuptools
 & pip install -U --pre pymi
-& pip install cffi
-& pip install numpy
-& pip install pycrypto
-& pip install amqp==1.4.9
-& pip install cffi==1.6.0
-
-if (($branchName.CompareTo('stable/kilo')) -eq 0) {
-    & pip install testresources==1.0.0
-}
 
 popd
 
@@ -273,7 +264,12 @@ ExecRetry {
         Get-ChildItem $buildDir\compute-hyperv
     }
     pushd $buildDir\compute-hyperv
-    & pip install -e $buildDir\compute-hyperv
+    if (($branchName -eq 'stable/liberty') -or ($branchName -eq 'stable/mitaka')) {
+        & pip install -c $buildDir\requirements\upper-constraints.txt -U .
+    }
+    else {
+        & pip install -e $buildDir\compute-hyperv
+    }
     if ($LastExitCode) { Throw "Failed to install compute-hyperv from repo" }
     popd
 }
@@ -281,8 +277,8 @@ ExecRetry {
 $novaConfig = (gc "$templateDir\nova.conf").replace('[DEVSTACK_IP]', "$devstackIP").Replace('[LOGDIR]', "$openstackLogs").Replace('[RABBITUSER]', $rabbitUser)
 $neutronConfig = (gc "$templateDir\neutron_hyperv_agent.conf").replace('[DEVSTACK_IP]', "$devstackIP").Replace('[LOGDIR]', "$openstackLogs").Replace('[RABBITUSER]', $rabbitUser)
 
-if (!$branchName.CompareTo('master')){
-    $novaConfig = $novaConfig.replace('hyperv.driver.HyperVDriver', 'compute_hyperv.driver.HyperVDriver')
+if (($branchName -eq 'stable/liberty') -or ($branchName -eq 'stable/mitaka')) {
+    $novaConfig = $novaConfig.replace('compute_hyperv.driver.HyperVDrvier', 'hyperv.driver.HyperVDriver')
 }
 
 Set-Content $configDir\nova.conf $novaConfig
