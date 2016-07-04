@@ -278,7 +278,7 @@ $novaConfig = (gc "$templateDir\nova.conf").replace('[DEVSTACK_IP]', "$devstackI
 $neutronConfig = (gc "$templateDir\neutron_hyperv_agent.conf").replace('[DEVSTACK_IP]', "$devstackIP").Replace('[LOGDIR]', "$openstackLogs").Replace('[RABBITUSER]', $rabbitUser)
 
 if (($branchName -eq 'stable/liberty') -or ($branchName -eq 'stable/mitaka')) {
-    $novaConfig = $novaConfig.replace('compute_hyperv.driver.HyperVDrvier', 'hyperv.driver.HyperVDriver')
+    $novaConfig = $novaConfig.replace('compute_hyperv.driver.HyperVDriver', 'hyperv.driver.HyperVDriver')
 }
 
 Set-Content $configDir\nova.conf $novaConfig
