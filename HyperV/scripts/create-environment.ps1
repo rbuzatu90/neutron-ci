@@ -273,13 +273,17 @@ ExecRetry {
         Get-ChildItem $buildDir\compute-hyperv
     }
     pushd $buildDir\compute-hyperv
-    & pip install $buildDir\compute-hyperv
+    & pip install -e $buildDir\compute-hyperv
     if ($LastExitCode) { Throw "Failed to install compute-hyperv from repo" }
     popd
 }
 
 $novaConfig = (gc "$templateDir\nova.conf").replace('[DEVSTACK_IP]', "$devstackIP").Replace('[LOGDIR]', "$openstackLogs").Replace('[RABBITUSER]', $rabbitUser)
 $neutronConfig = (gc "$templateDir\neutron_hyperv_agent.conf").replace('[DEVSTACK_IP]', "$devstackIP").Replace('[LOGDIR]', "$openstackLogs").Replace('[RABBITUSER]', $rabbitUser)
+
+if (!$branchName.CompareTo('master')){
+    $novaConfig = $novaConfig.replace('hyperv.driver.HyperVDriver', 'compute_hyperv.driver.HyperVDriver')
+}
 
 Set-Content $configDir\nova.conf $novaConfig
 if ($? -eq $false){
