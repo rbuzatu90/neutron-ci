@@ -142,6 +142,10 @@ if ($buildFor -eq "openstack/neutron") {
         GitClonePull "$buildDir\compute-hyperv" "https://git.openstack.org/openstack/compute-hyperv.git" $branchName
     }
     Get-ChildItem $buildDir
+    ExecRetry {
+        GitClonePull "$buildDir\requirements" "https://git.openstack.org/openstack/requirements.git" $branchName
+    }
+    Get-ChildItem $buildDir
 }
 else {
     Throw "Cannot build for project: $buildFor"
@@ -226,12 +230,23 @@ if ($isDebug -eq  'yes') {
 }
 
 ExecRetry {
+    pushd "$buildDir\requirements"
+    Write-Host "Installing OpenStack/Requirements..."
+    & pip install -c upper-constraints.txt -U pbr virtualenv httplib2 prettytable>=0.7 setuptools
+    & pip install -c upper-constraints.txt -U .
+    if ($LastExitCode) { Throw "Failed to install openstack/requirements from repo" }
+    popd
+}  
+
+ExecRetry {
     if ($isDebug -eq  'yes') {
         Write-Host "Content of $buildDir\$projectName"
         Get-ChildItem $buildDir\$projectName
     }
     pushd $buildDir\$projectName
-    & pip install $buildDir\$projectName
+    Write-Host "Installing openstack/neutron..."
+    & update-requirements.exe --source $buildDir\requirements .
+    & pip install -c $buildDir\requirements\upper-constraints.txt -U .
     if ($LastExitCode) { Throw "Failed to install neutron from repo" }
     popd
 }
@@ -242,7 +257,9 @@ ExecRetry {
         Get-ChildItem $buildDir\networking-hyperv
     }
     pushd $buildDir\networking-hyperv
-    & pip install $buildDir\networking-hyperv
+    Write-Host "Installing openstack/networking-hyperv..."
+    & update-requirements.exe --source $buildDir\requirements .
+    & pip install -c $buildDir\requirements\upper-constraints.txt -U .    
     if ($LastExitCode) { Throw "Failed to install networking-hyperv from repo" }
     popd
 }
@@ -253,7 +270,9 @@ ExecRetry {
         Get-ChildItem $buildDir\nova
     }
     pushd $buildDir\nova
-    & pip install $buildDir\nova
+    Write-Host "Installing openstack/nova..."
+    & update-requirements.exe --source $buildDir\requirements .
+    & pip install -c $buildDir\requirements\upper-constraints.txt -U .
     if ($LastExitCode) { Throw "Failed to install nova fom repo" }
     popd
 }
