@@ -301,6 +301,9 @@ $neutronConfig = (gc "$templateDir\neutron_hyperv_agent.conf").replace('[DEVSTAC
 if (($branchName -eq 'stable/liberty') -or ($branchName -eq 'stable/mitaka')) {
     $novaConfig = $novaConfig.replace('compute_hyperv.driver.HyperVDriver', 'hyperv.driver.HyperVDriver')
 }
+else {
+    $novaConfig = $novaConfig.replace('network_api_class', '#network_api_class')
+}
 
 Set-Content $configDir\nova.conf $novaConfig
 if ($? -eq $false){
