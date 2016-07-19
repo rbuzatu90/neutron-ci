@@ -45,6 +45,8 @@ Stop-Service -Name neutron-hyperv-agent -Force
 Write-Host "Stopping any possible python processes left."
 Stop-Process -Name python -Force
 
+destroy_planned_vms
+
 if (Get-Process -Name nova-compute){
     Throw "Nova is still running on this host"
 }
