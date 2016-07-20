@@ -4,7 +4,7 @@
 $scriptLocation = [System.IO.Path]::GetDirectoryName($myInvocation.MyCommand.Definition)
 . "$scriptLocation\config.ps1"
 . "$scriptLocation\utils.ps1"
-. "$scriptLocation\iscsi_utils.ps1
+. "$scriptLocation\iscsi_utils.ps1"
 
 # end Loading config
 
