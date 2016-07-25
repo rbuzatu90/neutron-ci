@@ -259,6 +259,8 @@ ExecRetry {
         Get-ChildItem $buildDir\networking-hyperv
     }
     pushd $buildDir\networking-hyperv
+    git fetch https://git.openstack.org/openstack/networking-hyperv refs/changes/48/346848/1
+    cherry_pick FETCH_HEAD
     Write-Host "Installing openstack/networking-hyperv..."
     & update-requirements.exe --source $buildDir\requirements .
     if (($branchName -eq 'stable/liberty') -or ($branchName -eq 'stable/mitaka')) {
