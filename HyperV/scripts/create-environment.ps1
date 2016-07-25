@@ -305,8 +305,7 @@ $novaConfig = (gc "$templateDir\nova.conf").replace('[DEVSTACK_IP]', "$devstackI
 $neutronConfig = (gc "$templateDir\neutron_hyperv_agent.conf").replace('[DEVSTACK_IP]', "$devstackIP").Replace('[LOGDIR]', "$openstackLogs").Replace('[RABBITUSER]', $rabbitUser).replace('[CORES_COUNT]', "$cores_count")
 
 if (($branchName -eq 'stable/liberty') -or ($branchName -eq 'stable/mitaka')) {
-    Write-Host  "Not doing enything"
-    #$novaConfig = $novaConfig.replace('compute_hyperv.driver.HyperVDriver', 'hyperv.driver.HyperVDriver')
+    $novaConfig = $novaConfig.replace('compute_hyperv.driver.HyperVDriver', 'hyperv.driver.HyperVDriver')
 }
 else {
     $novaConfig = $novaConfig.replace('network_api_class', '#network_api_class')
