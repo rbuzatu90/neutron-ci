@@ -261,7 +261,11 @@ ExecRetry {
     pushd $buildDir\networking-hyperv
     Write-Host "Installing openstack/networking-hyperv..."
     & update-requirements.exe --source $buildDir\requirements .
-    & pip install -c $buildDir\requirements\upper-constraints.txt -U .    
+    if (($branchName -eq 'stable/liberty') -or ($branchName -eq 'stable/mitaka')) {
+        & pip install -c $buildDir\requirements\upper-constraints.txt -U .
+    } else {
+        & pip install -e $buildDir\networking-hyperv
+    }
     if ($LastExitCode) { Throw "Failed to install networking-hyperv from repo" }
     popd
 }
