@@ -95,7 +95,7 @@ function cleanup_iscsi_targets() {
     $portals = get-iscsitargetportal
     foreach ($portal in $portals) {
         log_message "Removing portal $portal"
-        remove-iscsitargetportal $portal
+        remove-iscsitargetportal -TargetPortalAddress $portal.TargetPortalAddress -confirm:$false
     }
 
     # Restarting MSiSCSI service 
