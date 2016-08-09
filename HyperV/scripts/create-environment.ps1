@@ -278,6 +278,11 @@ ExecRetry {
         Get-ChildItem $buildDir\nova
     }
     pushd $buildDir\nova
+    if ($branchName -eq 'master') {
+        # This patch fixes deadlock on shelve instances
+        git fetch https://git.openstack.org/openstack/nova refs/changes/37/352837/1
+        cherry_pick FETCH_HEAD
+    }
     Write-Host "Installing openstack/nova..."
     & update-requirements.exe --source $buildDir\requirements .
     & pip install -c $buildDir\requirements\upper-constraints.txt -U .
@@ -291,6 +296,11 @@ ExecRetry {
         Get-ChildItem $buildDir\compute-hyperv
     }
     pushd $buildDir\compute-hyperv
+    if ($branchName -eq 'master') {
+        # This patch fixes deadlock on shelve instances
+        git fetch https://git.openstack.org/openstack/compute-hyperv refs/changes/41/352841/1
+        cherry_pick FETCH_HEAD
+    }
     if (($branchName -eq 'stable/liberty') -or ($branchName -eq 'stable/mitaka')) {
         & pip install -c $buildDir\requirements\upper-constraints.txt -U .
     }
