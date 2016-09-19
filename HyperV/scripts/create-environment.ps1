@@ -147,6 +147,13 @@ if ($buildFor -eq "openstack/neutron") {
     ExecRetry {
         GitClonePull "$buildDir\requirements" "https://git.openstack.org/openstack/requirements.git" $branchName
     }
+    
+    if (@("stable/mitaka", "stable/newton" "master") -contains $branchName.ToLower()) {
+    ExecRetry {
+        # os-win only exists on stable/mitaka, stable/newton and master.
+        GitClonePull "$buildDir\os-win" "https://git.openstack.org/openstack/os-win.git" $branchName
+    }
+}
     Get-ChildItem $buildDir
 }
 else {
