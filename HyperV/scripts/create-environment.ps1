@@ -317,7 +317,7 @@ if (@("stable/mitaka", "stable/newton", "master") -contains $branchName.ToLower(
     ExecRetry {
         # os-win only exists on stable/mitaka, stable/newton and master.
         GitClonePull "$buildDir\os-win" "https://git.openstack.org/openstack/os-win.git" $branchName
-        & pip install $buildDir\os-win
+        & pip install -U $buildDir\os-win
     }
 }
 
@@ -326,7 +326,7 @@ $cores_count = $cpu_array.count * $cpu_array[0].NumberOfCores
 $novaConfig = (gc "$templateDir\nova.conf").replace('[DEVSTACK_IP]', "$devstackIP").Replace('[LOGDIR]', "$openstackLogs").Replace('[RABBITUSER]', $rabbitUser)
 $neutronConfig = (gc "$templateDir\neutron_hyperv_agent.conf").replace('[DEVSTACK_IP]', "$devstackIP").Replace('[LOGDIR]', "$openstackLogs").Replace('[RABBITUSER]', $rabbitUser).replace('[CORES_COUNT]', "$cores_count")
 
-if (@("stable/mitaka", "stable/newton", "stable/liberty") -contains $branchName.ToLower()) {
+if (@("stable/mitaka", "stable/liberty") -contains $branchName.ToLower()) {
     $novaConfig = $novaConfig.replace('compute_hyperv.driver.HyperVDriver', 'hyperv.driver.HyperVDriver')
 }
 else {
