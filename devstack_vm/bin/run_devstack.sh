@@ -38,10 +38,6 @@ sudo pip install -U kombu
 sudo pip install -U pbr
 
 branch=`git -C /home/ubuntu/devstack rev-parse --abbrev-ref HEAD`
-if [ "$branch" == "stable/kilo" ]
-then
-	sudo pip install -U testtools==1.9.0
-fi
 
 # Clean devstack logs
 sudo rm -f "$DEVSTACK_LOGS/*"
