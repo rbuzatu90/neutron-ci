@@ -293,6 +293,7 @@ ExecRetry {
         git fetch https://git.openstack.org/openstack/compute-hyperv refs/changes/41/352841/1
         cherry_pick FETCH_HEAD
     }
+    & update-requirements.exe --source $buildDir\requirements .
     if (($branchName -eq 'stable/liberty') -or ($branchName -eq 'stable/mitaka')) {
         & pip install -c $buildDir\requirements\upper-constraints.txt -U .
     }
@@ -307,6 +308,7 @@ if (@("stable/mitaka", "stable/newton", "master") -contains $branchName.ToLower(
     ExecRetry {
         # os-win only exists on stable/mitaka, stable/newton and master.
         GitClonePull "$buildDir\os-win" "https://git.openstack.org/openstack/os-win.git" $branchName
+        & update-requirements.exe --source $buildDir\requirements .
         & pip install -U $buildDir\os-win
     }
 }
