@@ -30,22 +30,25 @@ if [[ ! -z $IS_DEBUG_JOB ]] && [[ $IS_DEBUG_JOB == "yes" ]]; then
 fi
 export NAME=$NAME
 
-echo NAME=$NAME >> /home/jenkins-slave/runs/devstack_params.$ZUUL_UUID.txt
-echo ZUUL_BRANCH=$ZUUL_BRANCH >> /home/jenkins-slave/runs/devstack_params.$ZUUL_UUID.txt
+echo NAME=$NAME | tee -a /home/jenkins-slave/runs/devstack_params.$ZUUL_UUID.txt
+echo ZUUL_PROJECT=$ZUUL_PROJECT | tee -a /home/jenkins-slave/runs/devstack_params.$ZUUL_UUID.txt
+echo ZUUL_BRANCH=$ZUUL_BRANCH | tee -a /home/jenkins-slave/runs/devstack_params.$ZUUL_UUID.txt
+echo ZUUL_CHANGE=$ZUUL_CHANGE | tee -a /home/jenkins-slave/runs/devstack_params.$ZUUL_UUID.txt
+echo ZUUL_PATCHSET=$ZUUL_PATCHSET | tee -a /home/jenkins-slave/runs/devstack_params.$ZUUL_UUID.txt
+echo ZUUL_UUID=$ZUUL_UUID | tee -a /home/jenkins-slave/runs/devstack_params.$ZUUL_UUID.txt
+echo IS_DEBUG_JOB=$IS_DEBUG_JOB | tee -a /home/jenkins-slave/runs/devstack_params.$ZUUL_UUID.txt
+echo ZUUL_BRANCH=$ZUUL_BRANCH | tee -a /home/jenkins-slave/runs/devstack_params.$ZUUL_UUID.txt
 
 NET_ID=$(nova net-list | grep private| awk '{print $2}')
-echo NET_ID=$NET_ID >> /home/jenkins-slave/runs/devstack_params.$ZUUL_UUID.txt
+echo NET_ID=$NET_ID | tee -a /home/jenkins-slave/runs/devstack_params.$ZUUL_UUID.txt
 
-echo NAME=$NAME
-echo NET_ID=$NET_ID
-
-devstack_image="devstack-78v1"
-
+devstack_image="devstack-80v4"
+echo "devstack_image=$devstack_image"  | tee -a /home/jenkins-slave/runs/devstack_params.$ZUUL_UUID.txt
 echo "Image used is: $devstack_image"
 echo "Deploying devstack $NAME"
 
 # Boot the new 10G of RAM flavor
-VMID=$(nova boot --availability-zone hyper-v --flavor nova.devstack --image $devstack_image --key-name default --security-groups devstack --nic net-id="$NET_ID" "$NAME" --poll | awk '{if (NR == 21) {print $4}}')
+VMID=$(nova boot --config-drive true --flavor devstack.xxl --image $devstack_image --key-name default --security-groups devstack --nic net-id="$NET_ID" --nic net-id="$NET_ID" "$NAME" --poll | awk '{if (NR == 21) {print $4}}')
 NOVABOOT_EXIT=$?
 export VMID=$VMID
 echo VMID=$VMID >>  /home/jenkins-slave/runs/devstack_params.$ZUUL_UUID.txt
@@ -125,7 +128,7 @@ echo "adding $NAME to /etc/hosts"
 run_ssh_cmd_with_retry ubuntu@$FLOATING_IP $DEVSTACK_SSH_KEY 'VMNAME=$(hostname); sudo sed -i "s/127.0.0.1 localhost/127.0.0.1 localhost $VMNAME/g" /etc/hosts' 1
 
 echo "adding apt-cacher-ng:"
-run_ssh_cmd_with_retry ubuntu@$FLOATING_IP $DEVSTACK_SSH_KEY 'echo "Acquire::http { Proxy \"http://10.0.110.1:3142\" };" | sudo tee --append /etc/apt/apt.conf.d/90-apt-proxy.conf' 1
+run_ssh_cmd_with_retry ubuntu@$FLOATING_IP $DEVSTACK_SSH_KEY 'echo "Acquire::http { Proxy \"http://10.21.7.214:3142\" };" | sudo tee --append /etc/apt/apt.conf.d/90-apt-proxy.conf' 1
 
 echo "clean any apt files:"
 run_ssh_cmd_with_retry ubuntu@$FLOATING_IP $DEVSTACK_SSH_KEY "sudo rm -rf /var/lib/apt/lists/*" 1
@@ -155,28 +158,18 @@ set -e
 
 run_ssh_cmd_with_retry ubuntu@$FLOATING_IP $DEVSTACK_SSH_KEY "sed -i 's/export OS_AUTH_URL.*/export OS_AUTH_URL=http:\/\/127.0.0.1:5000\/v2.0\//g' /home/ubuntu/keystonerc" 3
 
-# Add 1 more interface after successful SSH
-nova interface-attach --net-id "$NET_ID" "$VMID"
-
 # update repos
 run_ssh_cmd_with_retry ubuntu@$FLOATING_IP $DEVSTACK_SSH_KEY "/home/ubuntu/bin/update_devstack_repos.sh --branch $ZUUL_BRANCH --build-for $ZUUL_PROJECT" 1
 
 echo ZUUL_SITE=$ZUUL_SITE >> /home/jenkins-slave/runs/devstack_params.$ZUUL_UUID.txt
-
-# Set ZUUL IP in hosts file
-if  ! grep -qi zuul /etc/hosts ; then
-    run_ssh_cmd_with_retry ubuntu@$FLOATING_IP $DEVSTACK_SSH_KEY "echo '10.21.7.8 zuul.openstack.tld' | sudo tee -a /etc/hosts"
-    run_ssh_cmd_with_retry ubuntu@$FLOATING_IP $DEVSTACK_SSH_KEY "echo '10.9.1.27 zuul-ssd-0.openstack.tld' | sudo tee -a /etc/hosts"
-    run_ssh_cmd_with_retry ubuntu@$FLOATING_IP $DEVSTACK_SSH_KEY "echo '10.9.1.29 zuul-ssd-1.openstack.tld' | sudo tee -a /etc/hosts"
-fi
 
 # gerrit-git-prep
 run_ssh_cmd_with_retry ubuntu@$FLOATING_IP $DEVSTACK_SSH_KEY "/home/ubuntu/bin/gerrit_git_prep.sh --zuul-site $ZUUL_SITE --gerrit-site $ZUUL_SITE --zuul-ref $ZUUL_REF --zuul-change $ZUUL_CHANGE --zuul-project $ZUUL_PROJECT" 1
 
 # get locally the vhdx files used by tempest
 run_ssh_cmd_with_retry ubuntu@$FLOATING_IP $DEVSTACK_SSH_KEY "mkdir -p /home/ubuntu/devstack/files/images"
-run_ssh_cmd_with_retry ubuntu@$FLOATING_IP $DEVSTACK_SSH_KEY "wget http://10.0.110.1/cirros-0.3.4-x86_64.vhdx -O /home/ubuntu/devstack/files/images/cirros-0.3.4-x86_64.vhdx"
-run_ssh_cmd_with_retry ubuntu@$FLOATING_IP $DEVSTACK_SSH_KEY "wget http://10.0.110.1/Fedora-x86_64-20-20140618-sda.vhdx.gz -O /home/ubuntu/devstack/files/images/Fedora-x86_64-20-20140618-sda.vhdx.gz"
+run_ssh_cmd_with_retry ubuntu@$FLOATING_IP $DEVSTACK_SSH_KEY "wget http://10.21.7.214/cirros-0.3.4-x86_64.vhdx -O /home/ubuntu/devstack/files/images/cirros-0.3.4-x86_64.vhdx"
+run_ssh_cmd_with_retry ubuntu@$FLOATING_IP $DEVSTACK_SSH_KEY "wget http://10.21.7.214/Fedora-x86_64-20-20140618-sda.vhdx.gz -O /home/ubuntu/devstack/files/images/Fedora-x86_64-20-20140618-sda.vhdx.gz"
 
 # make local.sh executable
 run_ssh_cmd_with_retry ubuntu@$FLOATING_IP $DEVSTACK_SSH_KEY "chmod a+x /home/ubuntu/devstack/local.sh"
@@ -197,17 +190,17 @@ $IPAddr = $NetIPAddr.IPAddress
 Write-Host $IPAddr
 _EOF
 HYPERV_GET_DATA_IP=`echo "$PSCODE" | iconv -f ascii -t utf16le | base64 -w0`
-hyperv01_ip=`run_wsman_cmd $hyperv01 $WIN_USER $WIN_PASS "powershell -ExecutionPolicy RemoteSigned -EncodedCommand $HYPERV_GET_DATA_IP" 2>&1 | grep -E -o '10\.0\.[0-9]{1,2}\.[0-9]{1,3}'`
-hyperv02_ip=`run_wsman_cmd $hyperv02 $WIN_USER $WIN_PASS "powershell -ExecutionPolicy RemoteSigned -EncodedCommand $HYPERV_GET_DATA_IP" 2>&1 | grep -E -o '10\.0\.[0-9]{1,2}\.[0-9]{1,3}'`
+hyperv01_ip=`run_wsman_cmd $hyperv01 $WIN_USER $WIN_PASS "powershell -ExecutionPolicy RemoteSigned -EncodedCommand $HYPERV_GET_DATA_IP" 2>&1 | grep -E -o '10\.250\.[0-9]{1,2}\.[0-9]{1,3}'`
+hyperv02_ip=`run_wsman_cmd $hyperv02 $WIN_USER $WIN_PASS "powershell -ExecutionPolicy RemoteSigned -EncodedCommand $HYPERV_GET_DATA_IP" 2>&1 | grep -E -o '10\.250\.[0-9]{1,2}\.[0-9]{1,3}'`
 set -e
 
 echo `date -u +%H:%M:%S` "Data IP of $hyperv01 is $hyperv01_ip"
 echo `date -u +%H:%M:%S` "Data IP of $hyperv02 is $hyperv02_ip"
-if [[ ! $hyperv01_ip =~ ^10\.0\.[0-9]{1,2}\.[0-9]{1,3} ]]; then
+if [[ ! $hyperv01_ip =~ ^10\.250\.[0-9]{1,2}\.[0-9]{1,3} ]]; then
     echo "Did not receive a good IP for Hyper-V host $hyperv01 : $hyperv01_ip"
     exit 1
 fi
-if [[ ! $hyperv02_ip =~ ^10\.0\.[0-9]{1,2}\.[0-9]{1,3} ]]; then
+if [[ ! $hyperv02_ip =~ ^10\.250\.[0-9]{1,2}\.[0-9]{1,3} ]]; then
     echo "Did not receive a good IP for Hyper-V host $hyperv02 : $hyperv02_ip"
     exit 1
 fi
