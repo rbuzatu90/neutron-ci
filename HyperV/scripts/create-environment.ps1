@@ -308,6 +308,7 @@ if (@("stable/mitaka", "stable/newton", "master") -contains $branchName.ToLower(
     ExecRetry {
         # os-win only exists on stable/mitaka, stable/newton and master.
         GitClonePull "$buildDir\os-win" "https://git.openstack.org/openstack/os-win.git" $branchName
+        pushd $buildDir\os-win
 
         # Fixes VHD/x info retrieval issue by avoiding opening parents when fetching VHD info
         git fetch git://git.openstack.org/openstack/os-win refs/changes/18/408718/2
