@@ -19,15 +19,14 @@ if [ "$IS_DEBUG_JOB" != "yes" ]
         echo "Releasing devstack floating IP"
         nova remove-floating-ip "$VMID" "$FLOATING_IP"
         
-            echo "Removing devstack VM"
+        echo "Removing devstack VM"
         nova delete "$VMID"
         /usr/local/src/neutron-ci/vlan_allocation.py -r $VMID
-        
-            echo "Deleting devstack floating IP"
-        nova floating-ip-delete "$FLOATING_IP"
-        rm -f /home/jenkins-slave/runs/devstack_params.$ZUUL_UUID.txt
 
-      
+        #echo "Deleting devstack floating IP"
+        #nova floating-ip-delete "$FLOATING_IP"
+        
+        rm -f /home/jenkins-slave/runs/devstack_params.$ZUUL_UUID.txt
 fi
 
 set -e
