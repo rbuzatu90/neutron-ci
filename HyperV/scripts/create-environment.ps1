@@ -154,10 +154,10 @@ if ($hasLogDir -eq $false){
     mkdir $openstackLogs
 }
 
-$hasConfigDir = Test-Path $remoteConfigs\$hostname
-if ($hasConfigDir -eq $false){
-    mkdir $remoteConfigs\$hostname
-}
+#$hasConfigDir = Test-Path $remoteConfigs\$hostname
+#if ($hasConfigDir -eq $false){
+#    mkdir $remoteConfigs\$hostname
+#}
 
 pushd C:\
 if (Test-Path $pythonArchive)
@@ -184,9 +184,13 @@ else
 }
 Add-Content "$env:APPDATA\pip\pip.ini" $pip_conf_content
 
+$ErrorActionPreference = "Continue"
+
 & easy_install -U pip
 & pip install setuptools==26.0.0
 & pip install pymi
+
+$ErrorActionPreference = "Stop"
 
 popd
 
@@ -355,8 +359,8 @@ if ($hasNeutronExec -eq $false){
 }
 
 
-Remove-Item -Recurse -Force "$remoteConfigs\$hostname\*"
-Copy-Item -Recurse $configDir "$remoteConfigs\$hostname"
+#Remove-Item -Recurse -Force "$remoteConfigs\$hostname\*"
+#Copy-Item -Recurse $configDir "$remoteConfigs\$hostname"
 
 Write-Host "Starting the services"
 
