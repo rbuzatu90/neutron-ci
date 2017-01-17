@@ -155,7 +155,7 @@ mkdir -p "$LOG_DST"
 
 echo "Stop devstack services"
 cd /home/ubuntu/devstack
-unstack.sh
+./unstack.sh
 
 set +e
 
