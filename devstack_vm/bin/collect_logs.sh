@@ -1,6 +1,9 @@
 #!/bin/bash
 
-    DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+hyperv01=$1
+hyperv02=$2
+
+DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 . $DIR/config.sh
 . $DIR/utils.sh
 
