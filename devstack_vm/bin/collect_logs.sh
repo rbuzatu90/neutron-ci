@@ -156,7 +156,8 @@ function archive_tempest_files() {
 # Clean
 [ -d "$LOG_DST" ] && rm -rf "$LOG_DST"
 mkdir -p "$LOG_DST"
-if [ "$IS_DEBUG_JOB" == "yes" ]; then
+
+if [ "$IS_DEBUG_JOB" != "yes" ]; then
     echo "Stop devstack services"
     cd /home/ubuntu/devstack
     ./unstack.sh
