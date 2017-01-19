@@ -5,16 +5,10 @@ source /usr/local/src/neutron-ci-2016/jobs/library.sh
 logs_project=neutron
 logs_location='C:\openstack\logs\'
 set +e
-
-ssh -o "UserKnownHostsFile /dev/null" -o "StrictHostKeyChecking no" -i $DEVSTACK_SSH_KEY ubuntu@$FLOATING_IP "mkdir -p /openstack/logs/${hyperv01%%[.]*}"
-ssh -o "UserKnownHostsFile /dev/null" -o "StrictHostKeyChecking no" -i $DEVSTACK_SSH_KEY ubuntu@$FLOATING_IP "mkdir -p /openstack/logs/${hyperv02%%[.]*}"
-ssh -o "UserKnownHostsFile /dev/null" -o "StrictHostKeyChecking no" -i $DEVSTACK_SSH_KEY ubuntu@$FLOATING_IP "sudo chown -R nobody:nogroup /openstack/logs"
-ssh -o "UserKnownHostsFile /dev/null" -o "StrictHostKeyChecking no" -i $DEVSTACK_SSH_KEY ubuntu@$FLOATING_IP "sudo chmod -R 777 /openstack/logs"
-
 set -f
 
-run_wsmancmd_with_retry $hyperv01 $WIN_USER $WIN_PASS 'powershell -executionpolicy remotesigned Stop-Service nova-compute'
-run_wsmancmd_with_retry $hyperv01 $WIN_USER $WIN_PASS 'powershell -executionpolicy remotesigned Stop-Service neutron-hyperv-agent'
+[ "$IS_DEBUG_JOB" != "yes" ] && run_wsmancmd_with_retry $hyperv01 $WIN_USER $WIN_PASS 'powershell -executionpolicy remotesigned Stop-Service nova-compute'
+[ "$IS_DEBUG_JOB" != "yes" ] && run_wsmancmd_with_retry $hyperv01 $WIN_USER $WIN_PASS 'powershell -executionpolicy remotesigned Stop-Service neutron-hyperv-agent'
 run_wsmancmd_with_retry $hyperv01 $WIN_USER $WIN_PASS 'powershell -ExecutionPolicy RemoteSigned C:\OpenStack\neutron-ci\HyperV\scripts\export-eventlog.ps1'
 
 run_wsmancmd_with_retry $hyperv01 $WIN_USER $WIN_PASS 'systeminfo >> '$logs_location'systeminfo.log'
@@ -32,8 +26,8 @@ run_wsmancmd_with_retry $hyperv01 $WIN_USER $WIN_PASS 'powershell -executionpoli
 run_wsmancmd_with_retry $hyperv01 $WIN_USER $WIN_PASS 'sc qc nova-compute >> '$logs_location'nova_compute_service.log' 
 run_wsmancmd_with_retry $hyperv01 $WIN_USER $WIN_PASS 'sc qc neutron-hyperv-agent >> '$logs_location'neutron_hyperv_agent_service.log'
 
-run_wsmancmd_with_retry $hyperv02 $WIN_USER $WIN_PASS 'powershell -executionpolicy remotesigned Stop-Service nova-compute'
-run_wsmancmd_with_retry $hyperv02 $WIN_USER $WIN_PASS 'powershell -executionpolicy remotesigned Stop-Service neutron-hyperv-agent'
+[ "$IS_DEBUG_JOB" != "yes" ] && run_wsmancmd_with_retry $hyperv02 $WIN_USER $WIN_PASS 'powershell -executionpolicy remotesigned Stop-Service nova-compute'
+[ "$IS_DEBUG_JOB" != "yes" ] && run_wsmancmd_with_retry $hyperv02 $WIN_USER $WIN_PASS 'powershell -executionpolicy remotesigned Stop-Service neutron-hyperv-agent'
 run_wsmancmd_with_retry $hyperv02 $WIN_USER $WIN_PASS 'powershell -executionpolicy remotesigned C:\OpenStack\neutron-ci\HyperV\scripts\export-eventlog.ps1'
 
 run_wsmancmd_with_retry $hyperv02 $WIN_USER $WIN_PASS 'systeminfo >> '$logs_location'systeminfo.log' 
@@ -53,7 +47,7 @@ run_wsmancmd_with_retry $hyperv02 $WIN_USER $WIN_PASS 'sc qc neutron-hyperv-agen
 
 set +f
 echo "Collecting logs"
-ssh -o "UserKnownHostsFile /dev/null" -o "StrictHostKeyChecking no" -i $DEVSTACK_SSH_KEY ubuntu@$FLOATING_IP "/home/ubuntu/bin/collect_logs.sh $hyperv01 $hyperv02"
+ssh -o "UserKnownHostsFile /dev/null" -o "StrictHostKeyChecking no" -i $DEVSTACK_SSH_KEY ubuntu@$FLOATING_IP "/home/ubuntu/bin/collect_logs.sh $hyperv01 $hyperv02 $IS_DEBUG_JOB"
 
 if [ "$IS_DEBUG_JOB" != "yes" ]
 	then
