@@ -314,6 +314,10 @@ if (@("stable/mitaka", "stable/newton", "master") -contains $branchName.ToLower(
         GitClonePull "$buildDir\os-win" "https://git.openstack.org/openstack/os-win.git" $branchName
         pushd $buildDir\os-win
 
+        # Allow setting VM snapshot types
+        git fetch git://git.openstack.org/openstack/os-win refs/changes/75/422875/1
+        cherry_pick FETCH_HEAD 
+
         & update-requirements.exe --source $buildDir\requirements .
         & pip install -U $buildDir\os-win
     }
