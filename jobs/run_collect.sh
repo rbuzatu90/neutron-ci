@@ -76,11 +76,11 @@ echo "Removing local copy of aggregate logs"
 rm -fv aggregate-$VMID.tar.gz
 
 echo "Removing HyperV temporary console logs.."
-rm -fv /home/jenkins-slave/logs/hyperv-build-log-$ZUUL_UUID-$hyperv01
-rm -fv /home/jenkins-slave/logs/hyperv-build-log-$ZUUL_UUID-$hyperv02
+rm -fv /home/jenkins-slave/logs/hyperv-build-log-$ZUUL_UUID-$hyperv01.log
+rm -fv /home/jenkins-slave/logs/hyperv-build-log-$ZUUL_UUID-$hyperv02.log
 
 echo "Removing temporary devstack log.."
-rm -fv /home/jenkins-slave/logs/devstack-build-log-$ZUUL_UUID
+rm -fv /home/jenkins-slave/logs/devstack-build-log-$ZUUL_UUID.log
 
 echo `date -u +%H:%M:%S`
 set -e
