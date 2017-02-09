@@ -154,11 +154,6 @@ if ($hasLogDir -eq $false){
     mkdir $openstackLogs
 }
 
-#$hasConfigDir = Test-Path $remoteConfigs\$hostname
-#if ($hasConfigDir -eq $false){
-#    mkdir $remoteConfigs\$hostname
-#}
-
 pushd C:\
 if (Test-Path $pythonArchive)
 {
@@ -168,7 +163,6 @@ Invoke-WebRequest -Uri http://10.20.1.14:8080/python.zip -OutFile $pythonArchive
 if (Test-Path $pythonDir)
 {
     Cmd /C "rmdir /S /Q $pythonDir"
-    #Remove-Item -Recurse -Force $pythonDir
 }
 Write-Host "Ensure Python folder is up to date"
 Write-Host "Extracting archive.."
@@ -255,8 +249,6 @@ ExecRetry {
         Get-ChildItem $buildDir\networking-hyperv
     }
     pushd $buildDir\networking-hyperv
-    git fetch https://git.openstack.org/openstack/networking-hyperv refs/changes/48/346848/1
-    cherry_pick FETCH_HEAD
     Write-Host "Installing openstack/networking-hyperv..."
     & update-requirements.exe --source $buildDir\requirements .
     if (($branchName -eq 'stable/liberty') -or ($branchName -eq 'stable/mitaka')) {
@@ -274,11 +266,6 @@ ExecRetry {
         Get-ChildItem $buildDir\nova
     }
     pushd $buildDir\nova
-    if ($branchName -eq 'master') {
-        # This patch fixes deadlock on shelve instances
-        git fetch https://git.openstack.org/openstack/nova refs/changes/37/352837/1
-        cherry_pick FETCH_HEAD
-    }
     Write-Host "Installing openstack/nova..."
     & update-requirements.exe --source $buildDir\requirements .
     & pip install -c $buildDir\requirements\upper-constraints.txt -U .
@@ -292,11 +279,6 @@ ExecRetry {
         Get-ChildItem $buildDir\compute-hyperv
     }
     pushd $buildDir\compute-hyperv
-    if ($branchName -eq 'master') {
-        # This patch fixes duplicate option use_multipath_io
-        git fetch https://git.openstack.org/openstack/compute-hyperv refs/changes/91/400091/1
-        cherry_pick FETCH_HEAD
-    }
     & update-requirements.exe --source $buildDir\requirements .
     if (($branchName -eq 'stable/liberty') -or ($branchName -eq 'stable/mitaka')) {
         & pip install -c $buildDir\requirements\upper-constraints.txt -U .
@@ -355,85 +337,3 @@ if ($hasNeutronExec -eq $false){
 }
 
 Write-Host "Done building env"
-##Remove-Item -Recurse -Force "$remoteConfigs\$hostname\*"
-##Copy-Item -Recurse $configDir "$remoteConfigs\$hostname"
-#
-#Write-Host "Starting the services"
-#
-#$currDate = (Get-Date).ToString()
-#Write-Host "$currDate Starting nova-compute service"
-#Try
-#{
-#    Start-Service nova-compute
-#}
-#Catch
-#{
-#    Write-Host "Can not start the nova-compute service"
-#}
-#Start-Sleep -s 30
-#if ($(get-service nova-compute).Status -eq "Stopped")
-#{
-#    Write-Host "nova-compute service is not running."
-#    $currDate = (Get-Date).ToString()
-#    Write-Host "$currDate We try to start:"
-#        Write-Host Start-Process -PassThru -RedirectStandardError "$openstackLogs\process_error.txt" -RedirectStandardOutput "$openstackLogs\process_output.txt" -FilePath "$pythonDir\Scripts\nova-compute.exe" -ArgumentList "--config-file $configDir\nova.conf"
-#    $currDate = (Get-Date).ToString()
-#    Add-Content "$openstackLogs\nova-compute.log" "`n$currDate Starting nova-compute as a python process."
-#    Try
-#    {
-#    	$proc = Start-Process -PassThru -RedirectStandardError "$openstackLogs\process_error.txt" -RedirectStandardOutput "$openstackLogs\process_output.txt" -FilePath "$pythonScripts\nova-compute.exe" -ArgumentList "--config-file $configDir\nova.conf"
-#    }
-#    Catch
-#    {
-#    	Throw "Could not start the process manually"
-#    }
-#    Start-Sleep -s 30
-#    if (! $proc.HasExited)
-#    {
-#    	Stop-Process -Id $proc.Id -Force
-#    	Throw "Process started fine when run manually."
-#    }
-#    else
-#    {
-#    	Throw "Can not start the nova-compute service. The manual run failed as well."
-#    }
-#}
-#
-#$currDate = (Get-Date).ToString()
-#Write-Host "$currDate neutron-hyperv-agent service"
-#Try
-#{
-#    Start-Service neutron-hyperv-agent
-#}
-#Catch
-#{
-#    Write-Host "Can not start the neutron-hyperv-agent service"
-#}
-#Start-Sleep -s 30
-#if ($(get-service neutron-hyperv-agent).Status -eq "Stopped")
-#{
-#    Write-Host "neutron-hyperv-agent service is not running."
-#    $currDate = (Get-Date).ToString()
-#    Write-Host "$currDate We try to start:"
-#    Write-Host Start-Process -PassThru -RedirectStandardError "$openstackLogs\process_error.txt" -RedirectStandardOutput "$openstackLogs\process_output.txt" -FilePath "$pythonScripts\neutron-hyperv-agent.exe" -ArgumentList "--config-file $configDir\neutron_hyperv_agent.conf"
-#    $currDate = (Get-Date).ToString()
-#    Add-Content "$openstackLogs\neutron-hyperv-agent.log" "`n$currDate starting neutron-hyperv-agent as a python process."
-#    Try
-#    {
-#    	$proc = Start-Process -PassThru -RedirectStandardError "$openstackLogs\process_error.txt" -RedirectStandardOutput "$openstackLogs\process_output.txt" -FilePath "$pythonScripts\neutron-hyperv-agent.exe" -ArgumentList "--config-file $configDir\neutron_hyperv_agent.conf"
-#    }
-#    Catch
-#    {
-#    	Throw "Could not start the process manually"
-#    }
-#    Start-Sleep -s 30
-#    if (! $proc.HasExited)
-#    {
-#    	Stop-Process -Id $proc.Id -Force
-#    	Throw "Process started fine when run manually."
-#    }
-#    else
-#    {
-#    	Throw "Can not start the neutron-hyperv-agent service. The manual run failed as well."
-#    }
-#}
