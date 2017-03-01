@@ -297,6 +297,7 @@ if (@("stable/mitaka", "stable/newton", "stable/ocata", "master") -contains $bra
         pushd $buildDir\os-win
         Write-Host "Installing openstack/os-win..."
         & update-requirements.exe --source $buildDir\requirements .
+        # remove os-win from upper-constraints.txt
         sls -n os-win $buildDir\requirements\upper-constraints.txt | select line > $buildDir\requirements\upper-constraints-oswin.txt
         & pip install -c $buildDir\requirements\upper-constraints-oswin.txt -U .       
     }
