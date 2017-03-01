@@ -295,9 +295,10 @@ if (@("stable/mitaka", "stable/newton", "stable/ocata", "master") -contains $bra
         # os-win only exists on stable/mitaka, stable/newton, stable/ocata and master.
         GitClonePull "$buildDir\os-win" "https://git.openstack.org/openstack/os-win.git" $branchName
         pushd $buildDir\os-win
-
+        Write-Host "Installing openstack/os-win..."
         & update-requirements.exe --source $buildDir\requirements .
-        & pip install -U $buildDir\os-win
+        sls -n os-win $buildDir\requirements\upper-constraints.txt | select line > $buildDir\requirements\upper-constraints-oswin.txt
+        & pip install -c $buildDir\requirements\upper-constraints-oswin.txt -U .       
     }
 }
 
