@@ -299,7 +299,8 @@ if (@("stable/mitaka", "stable/newton", "stable/ocata", "master") -contains $bra
         & update-requirements.exe --source $buildDir\requirements .
         # remove os-win from upper-constraints.txt
         & edit-constraints.exe $buildDir\requirements\upper-constraints.txt -- os-win ""
-        & pip install -c $buildDir\requirements\upper-constraints.txt -U .    
+        & pip install -c $buildDir\requirements\upper-constraints.txt -U .
+        if ($LastExitCode) { Throw "Failed to install openstack/os-win from repo" }
     }
 }
 
