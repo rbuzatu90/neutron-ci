@@ -290,18 +290,16 @@ ExecRetry {
     popd
 }
 
-if (@("stable/mitaka", "stable/newton", "stable/ocata", "master") -contains $branchName.ToLower()) {
-    ExecRetry {
-        # os-win only exists on stable/mitaka, stable/newton, stable/ocata and master.
-        GitClonePull "$buildDir\os-win" "https://git.openstack.org/openstack/os-win.git" $branchName
-        pushd $buildDir\os-win
-        Write-Host "Installing openstack/os-win..."
-        & update-requirements.exe --source $buildDir\requirements .
-        # remove os-win from upper-constraints.txt
-        & edit-constraints.exe $buildDir\requirements\upper-constraints.txt -- os-win ""
-        & pip install -c $buildDir\requirements\upper-constraints.txt -U .
-        if ($LastExitCode) { Throw "Failed to install openstack/os-win from repo" }
-    }
+ExecRetry {
+    GitClonePull "$buildDir\os-win" "https://git.openstack.org/openstack/os-win.git" $branchName
+    pushd $buildDir\os-win
+    Write-Host "Installing openstack/os-win..."
+    & update-requirements.exe --source $buildDir\requirements .
+    # remove os-win from upper-constraints.txt
+    & edit-constraints.exe $buildDir\requirements\upper-constraints.txt -- os-win ""
+    & pip install -c $buildDir\requirements\upper-constraints.txt -U .
+    if ($LastExitCode) { Throw "Failed to install openstack/os-win from repo" }
+    popd
 }
 
 # Temporary fix for os-win
